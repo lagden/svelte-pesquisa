@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset='utf8'>
+		<meta name='viewport' content='width=device-width'>
+		<title>Exemplo</title>
+
+		<link rel="preconnect" href="https://unpkg.com" crossorigin>
+		<link rel="stylesheet" href="https://unpkg.com/modern-normalize@1.0.0/modern-normalize.css">
+
+		<link rel='icon' type='image/png' href='/favicon.png'>
+		<link rel='stylesheet' href='/global.css'>
+
+		<script type="module" src="./module/Pesquisa.js"></script>
+
+		<style>
+			.pesquisa {
+				width: 100%;
+				height: 36px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<form action="#xxx">
+			<tadashi-pesquisa
+				target="#q"
+				storage="token"
+				parse="data.placa_chassi.mol"
+				key="MODELO"
+				endpoint="https://service.teleport.com.br/big-data/v1/gql"
+				query='{placa_chassi(value: "${value}") {ano_fabricacao, ano_modelo, chassi, cidade, cilindradas, combustivel, cor, especie_veiculo, estado, marca, modelo, placa, potencia, quantidade_eixos, quantidade_passageiros, tipo_carroceria, tipo_veiculo, mol { CODCAR, MODELO, MARCA, CODMARCA, INIFABR, FIMFABR, CODFIPE, CLASSE }}}'
+			>
+				<input type="text" id="q" name="q" class="pesquisa">
+			</tadashi-pesquisa>
+		</form>
+		<script>
+			globalThis.localStorage.setItem('token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjp7ImlkIjo0ODA0MiwibmFtZSI6IkNhcmxvcyBDYXJvdGVudXRvIiwiZW1wcmVzYSI6OCwidW5pZGFkZSI6MSwiY29ycmV0b3JhIjoxLCJwcm9kdXRvciI6MTg3fSwiYXVkIjoiY2hhdDp0ZWxlcG9ydCIsImlzcyI6Imh0dHBzOi8vdGVsZXBvcnQuY29tLmJyIiwiaWF0IjoxNTk3OTYzODI1fQ.GzFUuFBos78mDy_FZjs6VaFxEijou7vaoDWqYbwoNmqD9HNdh1AOvbXdDSQBePeiKyqBgitglFjZY5RZHFomAw')
+			const pesquisa = document.querySelector('tadashi-pesquisa')
+			pesquisa.addEventListener('response', event => {
+				console.log(event)
+			})
+			pesquisa.addEventListener('error', event => {
+				console.log(event)
+			})
+		</script>
+	</body>
+</html>
