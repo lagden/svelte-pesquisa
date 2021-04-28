@@ -1,10 +1,4 @@
 function noop() { }
-function assign(tar, src) {
-    // @ts-ignore
-    for (const k in src)
-        tar[k] = src[k];
-    return tar;
-}
 function add_location(element, file, line, column, char) {
     element.__svelte_meta = {
         loc: { file, line, column, char }
@@ -27,21 +21,6 @@ function safe_not_equal(a, b) {
 }
 function is_empty(obj) {
     return Object.keys(obj).length === 0;
-}
-function exclude_internal_props(props) {
-    const result = {};
-    for (const k in props)
-        if (k[0] !== '$')
-            result[k] = props[k];
-    return result;
-}
-function compute_rest_props(props, keys) {
-    const rest = {};
-    keys = new Set(keys);
-    for (const k in props)
-        if (!keys.has(k) && k[0] !== '$')
-            rest[k] = props[k];
-    return rest;
 }
 
 function append(target, node) {
@@ -71,27 +50,6 @@ function attr(node, attribute, value) {
         node.removeAttribute(attribute);
     else if (node.getAttribute(attribute) !== value)
         node.setAttribute(attribute, value);
-}
-function set_attributes(node, attributes) {
-    // @ts-ignore
-    const descriptors = Object.getOwnPropertyDescriptors(node.__proto__);
-    for (const key in attributes) {
-        if (attributes[key] == null) {
-            node.removeAttribute(key);
-        }
-        else if (key === 'style') {
-            node.style.cssText = attributes[key];
-        }
-        else if (key === '__value') {
-            node.value = node[key] = attributes[key];
-        }
-        else if (descriptors[key] && descriptors[key].set) {
-            node[key] = attributes[key];
-        }
-        else {
-            attr(node, key, attributes[key]);
-        }
-    }
 }
 function children(element) {
     return Array.from(element.childNodes);
@@ -282,40 +240,6 @@ function validate_each_keys(ctx, list, get_context, get_key) {
         }
         keys.add(key);
     }
-}
-
-function get_spread_update(levels, updates) {
-    const update = {};
-    const to_null_out = {};
-    const accounted_for = { $$scope: 1 };
-    let i = levels.length;
-    while (i--) {
-        const o = levels[i];
-        const n = updates[i];
-        if (n) {
-            for (const key in o) {
-                if (!(key in n))
-                    to_null_out[key] = 1;
-            }
-            for (const key in n) {
-                if (!accounted_for[key]) {
-                    update[key] = n[key];
-                    accounted_for[key] = 1;
-                }
-            }
-            levels[i] = n;
-        }
-        else {
-            for (const key in o) {
-                accounted_for[key] = 1;
-            }
-        }
-    }
-    for (const key in to_null_out) {
-        if (!(key in update))
-            update[key] = undefined;
-    }
-    return update;
 }
 function mount_component(component, target, anchor, customElement) {
     const { fragment, on_mount, on_destroy, after_update } = component.$$;
@@ -2577,8 +2501,8 @@ const file = "src/components/Pesquisa.svelte";
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[18] = list[i];
-	child_ctx[20] = i;
+	child_ctx[17] = list[i];
+	child_ctx[19] = i;
 	return child_ctx;
 }
 
@@ -2589,7 +2513,7 @@ function create_if_block(ctx) {
 	let each_1_lookup = new Map();
 	let each_value = /*items*/ ctx[4];
 	validate_each_argument(each_value);
-	const get_key = ctx => /*item*/ ctx[18]?.[/*key*/ ctx[0] ?? "id"] ?? /*item*/ ctx[18];
+	const get_key = ctx => /*item*/ ctx[17]?.[/*key*/ ctx[0] ?? "id"] ?? /*item*/ ctx[17];
 	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
 	for (let i = 0; i < each_value.length; i += 1) {
@@ -2647,7 +2571,7 @@ function create_if_block(ctx) {
 // (159:4) {#each items as item, idx (item?.[key ?? 'id'] ?? item)}
 function create_each_block(key_2, ctx) {
 	let div;
-	let t_value = /*item*/ ctx[18]?.[/*key*/ ctx[0] ?? "id"] + "";
+	let t_value = /*item*/ ctx[17]?.[/*key*/ ctx[0] ?? "id"] + "";
 	let t;
 	let mounted;
 	let dispose;
@@ -2671,7 +2595,7 @@ function create_each_block(key_2, ctx) {
 					div,
 					"click",
 					function () {
-						if (is_function(/*itemSelected*/ ctx[6](/*idx*/ ctx[20]))) /*itemSelected*/ ctx[6](/*idx*/ ctx[20]).apply(this, arguments);
+						if (is_function(/*itemSelected*/ ctx[6](/*idx*/ ctx[19]))) /*itemSelected*/ ctx[6](/*idx*/ ctx[19]).apply(this, arguments);
 					},
 					false,
 					false,
@@ -2683,7 +2607,7 @@ function create_each_block(key_2, ctx) {
 		},
 		p: function update(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty & /*items, key*/ 17 && t_value !== (t_value = /*item*/ ctx[18]?.[/*key*/ ctx[0] ?? "id"] + "")) set_data_dev(t, t_value);
+			if (dirty & /*items, key*/ 17 && t_value !== (t_value = /*item*/ ctx[17]?.[/*key*/ ctx[0] ?? "id"] + "")) set_data_dev(t, t_value);
 		},
 		d: function destroy(detaching) {
 			if (detaching) detach_dev(div);
@@ -2710,22 +2634,9 @@ function create_fragment(ctx) {
 	let t0;
 	let t1;
 	let button;
-	let t2;
 	let mounted;
 	let dispose;
 	let if_block = /*items*/ ctx[4] && /*items*/ ctx[4].length > 0 && create_if_block(ctx);
-
-	let button_levels = [
-		{ type: "button" },
-		{ class: "_tadashi_pesquisa__trigger" },
-		/*$$restProps*/ ctx[7]
-	];
-
-	let button_data = {};
-
-	for (let i = 0; i < button_levels.length; i += 1) {
-		button_data = assign(button_data, button_levels[i]);
-	}
 
 	const block = {
 		c: function create() {
@@ -2736,12 +2647,13 @@ function create_fragment(ctx) {
 			if (if_block) if_block.c();
 			t1 = space();
 			button = element("button");
-			t2 = text("✓");
+			button.textContent = "✓";
 			this.c = noop;
 			add_location(slot, file, 155, 2, 3116);
 			attr_dev(div0, "class", "_tadashi_pesquisa__target");
 			add_location(div0, file, 154, 1, 3074);
-			set_attributes(button, button_data);
+			attr_dev(button, "type", "button");
+			attr_dev(button, "class", "_tadashi_pesquisa__trigger");
 			toggle_class(button, "_tadashi_pesquisa__trigger___loading", /*isBusy*/ ctx[3]);
 			toggle_class(button, "_tadashi_pesquisa__trigger___shadow", /*shadow*/ ctx[1]);
 			add_location(button, file, 164, 1, 3400);
@@ -2759,8 +2671,7 @@ function create_fragment(ctx) {
 			if (if_block) if_block.m(div0, null);
 			append_dev(div1, t1);
 			append_dev(div1, button);
-			append_dev(button, t2);
-			/*button_binding*/ ctx[15](button);
+			/*button_binding*/ ctx[14](button);
 
 			if (!mounted) {
 				dispose = listen_dev(button, "click", /*search*/ ctx[5], false, false, false);
@@ -2781,21 +2692,20 @@ function create_fragment(ctx) {
 				if_block = null;
 			}
 
-			set_attributes(button, button_data = get_spread_update(button_levels, [
-				{ type: "button" },
-				{ class: "_tadashi_pesquisa__trigger" },
-				dirty & /*$$restProps*/ 128 && /*$$restProps*/ ctx[7]
-			]));
+			if (dirty & /*isBusy*/ 8) {
+				toggle_class(button, "_tadashi_pesquisa__trigger___loading", /*isBusy*/ ctx[3]);
+			}
 
-			toggle_class(button, "_tadashi_pesquisa__trigger___loading", /*isBusy*/ ctx[3]);
-			toggle_class(button, "_tadashi_pesquisa__trigger___shadow", /*shadow*/ ctx[1]);
+			if (dirty & /*shadow*/ 2) {
+				toggle_class(button, "_tadashi_pesquisa__trigger___shadow", /*shadow*/ ctx[1]);
+			}
 		},
 		i: noop,
 		o: noop,
 		d: function destroy(detaching) {
 			if (detaching) detach_dev(div1);
 			if (if_block) if_block.d();
-			/*button_binding*/ ctx[15](null);
+			/*button_binding*/ ctx[14](null);
 			mounted = false;
 			dispose();
 		}
@@ -2813,8 +2723,6 @@ function create_fragment(ctx) {
 }
 
 function instance($$self, $$props, $$invalidate) {
-	const omit_props_names = ["endpoint","target","auth","storage","query","match","key","parse","shadow"];
-	let $$restProps = compute_rest_props($$props, omit_props_names);
 	let { $$slots: slots = {}, $$scope } = $$props;
 	validate_slots("tadashi-pesquisa", slots, []);
 	let { endpoint } = $$props;
@@ -2966,6 +2874,22 @@ function instance($$self, $$props, $$invalidate) {
 		};
 	}
 
+	const writable_props = [
+		"endpoint",
+		"target",
+		"auth",
+		"storage",
+		"query",
+		"match",
+		"key",
+		"parse",
+		"shadow"
+	];
+
+	Object.keys($$props).forEach(key => {
+		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<tadashi-pesquisa> was created with unknown prop '${key}'`);
+	});
+
 	function button_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
 			node = $$value;
@@ -2973,18 +2897,16 @@ function instance($$self, $$props, $$invalidate) {
 		});
 	}
 
-	$$self.$$set = $$new_props => {
-		$$props = assign(assign({}, $$props), exclude_internal_props($$new_props));
-		$$invalidate(7, $$restProps = compute_rest_props($$props, omit_props_names));
-		if ("endpoint" in $$new_props) $$invalidate(8, endpoint = $$new_props.endpoint);
-		if ("target" in $$new_props) $$invalidate(9, target = $$new_props.target);
-		if ("auth" in $$new_props) $$invalidate(10, auth = $$new_props.auth);
-		if ("storage" in $$new_props) $$invalidate(11, storage = $$new_props.storage);
-		if ("query" in $$new_props) $$invalidate(12, query = $$new_props.query);
-		if ("match" in $$new_props) $$invalidate(13, match = $$new_props.match);
-		if ("key" in $$new_props) $$invalidate(0, key = $$new_props.key);
-		if ("parse" in $$new_props) $$invalidate(14, parse = $$new_props.parse);
-		if ("shadow" in $$new_props) $$invalidate(1, shadow = $$new_props.shadow);
+	$$self.$$set = $$props => {
+		if ("endpoint" in $$props) $$invalidate(7, endpoint = $$props.endpoint);
+		if ("target" in $$props) $$invalidate(8, target = $$props.target);
+		if ("auth" in $$props) $$invalidate(9, auth = $$props.auth);
+		if ("storage" in $$props) $$invalidate(10, storage = $$props.storage);
+		if ("query" in $$props) $$invalidate(11, query = $$props.query);
+		if ("match" in $$props) $$invalidate(12, match = $$props.match);
+		if ("key" in $$props) $$invalidate(0, key = $$props.key);
+		if ("parse" in $$props) $$invalidate(13, parse = $$props.parse);
+		if ("shadow" in $$props) $$invalidate(1, shadow = $$props.shadow);
 	};
 
 	$$self.$capture_state = () => ({
@@ -3008,20 +2930,20 @@ function instance($$self, $$props, $$invalidate) {
 		itemSelected
 	});
 
-	$$self.$inject_state = $$new_props => {
-		if ("endpoint" in $$props) $$invalidate(8, endpoint = $$new_props.endpoint);
-		if ("target" in $$props) $$invalidate(9, target = $$new_props.target);
-		if ("auth" in $$props) $$invalidate(10, auth = $$new_props.auth);
-		if ("storage" in $$props) $$invalidate(11, storage = $$new_props.storage);
-		if ("query" in $$props) $$invalidate(12, query = $$new_props.query);
-		if ("match" in $$props) $$invalidate(13, match = $$new_props.match);
-		if ("key" in $$props) $$invalidate(0, key = $$new_props.key);
-		if ("parse" in $$props) $$invalidate(14, parse = $$new_props.parse);
-		if ("shadow" in $$props) $$invalidate(1, shadow = $$new_props.shadow);
-		if ("node" in $$props) $$invalidate(2, node = $$new_props.node);
-		if ("currentResponse" in $$props) currentResponse = $$new_props.currentResponse;
-		if ("isBusy" in $$props) $$invalidate(3, isBusy = $$new_props.isBusy);
-		if ("items" in $$props) $$invalidate(4, items = $$new_props.items);
+	$$self.$inject_state = $$props => {
+		if ("endpoint" in $$props) $$invalidate(7, endpoint = $$props.endpoint);
+		if ("target" in $$props) $$invalidate(8, target = $$props.target);
+		if ("auth" in $$props) $$invalidate(9, auth = $$props.auth);
+		if ("storage" in $$props) $$invalidate(10, storage = $$props.storage);
+		if ("query" in $$props) $$invalidate(11, query = $$props.query);
+		if ("match" in $$props) $$invalidate(12, match = $$props.match);
+		if ("key" in $$props) $$invalidate(0, key = $$props.key);
+		if ("parse" in $$props) $$invalidate(13, parse = $$props.parse);
+		if ("shadow" in $$props) $$invalidate(1, shadow = $$props.shadow);
+		if ("node" in $$props) $$invalidate(2, node = $$props.node);
+		if ("currentResponse" in $$props) currentResponse = $$props.currentResponse;
+		if ("isBusy" in $$props) $$invalidate(3, isBusy = $$props.isBusy);
+		if ("items" in $$props) $$invalidate(4, items = $$props.items);
 	};
 
 	if ($$props && "$$inject" in $$props) {
@@ -3036,7 +2958,6 @@ function instance($$self, $$props, $$invalidate) {
 		items,
 		search,
 		itemSelected,
-		$$restProps,
 		endpoint,
 		target,
 		auth,
@@ -3064,14 +2985,14 @@ class Pesquisa extends SvelteElement {
 			create_fragment,
 			safe_not_equal,
 			{
-				endpoint: 8,
-				target: 9,
-				auth: 10,
-				storage: 11,
-				query: 12,
-				match: 13,
+				endpoint: 7,
+				target: 8,
+				auth: 9,
+				storage: 10,
+				query: 11,
+				match: 12,
 				key: 0,
-				parse: 14,
+				parse: 13,
 				shadow: 1
 			}
 		);
@@ -3079,7 +3000,7 @@ class Pesquisa extends SvelteElement {
 		const { ctx } = this.$$;
 		const props = this.attributes;
 
-		if (/*endpoint*/ ctx[8] === undefined && !("endpoint" in props)) {
+		if (/*endpoint*/ ctx[7] === undefined && !("endpoint" in props)) {
 			console_1.warn("<tadashi-pesquisa> was created without expected prop 'endpoint'");
 		}
 
@@ -3110,7 +3031,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get endpoint() {
-		return this.$$.ctx[8];
+		return this.$$.ctx[7];
 	}
 
 	set endpoint(endpoint) {
@@ -3119,7 +3040,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get target() {
-		return this.$$.ctx[9];
+		return this.$$.ctx[8];
 	}
 
 	set target(target) {
@@ -3128,7 +3049,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get auth() {
-		return this.$$.ctx[10];
+		return this.$$.ctx[9];
 	}
 
 	set auth(auth) {
@@ -3137,7 +3058,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get storage() {
-		return this.$$.ctx[11];
+		return this.$$.ctx[10];
 	}
 
 	set storage(storage) {
@@ -3146,7 +3067,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get query() {
-		return this.$$.ctx[12];
+		return this.$$.ctx[11];
 	}
 
 	set query(query) {
@@ -3155,7 +3076,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get match() {
-		return this.$$.ctx[13];
+		return this.$$.ctx[12];
 	}
 
 	set match(match) {
@@ -3173,7 +3094,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get parse() {
-		return this.$$.ctx[14];
+		return this.$$.ctx[13];
 	}
 
 	set parse(parse) {

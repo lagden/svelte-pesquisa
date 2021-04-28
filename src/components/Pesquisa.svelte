@@ -169,7 +169,6 @@
 		class:_tadashi_pesquisa__trigger___loading={isBusy}
 		class:_tadashi_pesquisa__trigger___shadow={shadow}
 		on:click={search}
-		{...$$restProps}
 	>✓</button>
 </div>
 
