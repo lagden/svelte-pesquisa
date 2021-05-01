@@ -84,10 +84,10 @@ __metadata:
     "@tadashi/flatten-object": 2.0.0
     "@tadashi/unflatten-object": 1.0.2
     npm-run-all: 4.1.5
-    rollup: 2.45.2
+    rollup: 2.46.0
     rollup-plugin-svelte: 7.1.0
     sirv-cli: 1.0.11
-    svelte: 3.37.0
+    svelte: 3.38.0
   languageName: unknown
   linkType: soft
 
@@ -122,9 +122,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 15.0.0
-  resolution: "@types/node@npm:15.0.0"
-  checksum: 9d3ced65feb73444056941cc7bcbbc4885b60fb22ba3c38e1ad26c96909dd914e1d87fa4c22a5dbada8588606c56116bbd6d42569e87513866919b801e314d2e
+  version: 15.0.1
+  resolution: "@types/node@npm:15.0.1"
+  checksum: 4e4fb69394efb224272ad7c6b6dc16a381b97e46a8f3c21d33fec51ef13a4d635f571b446d127eae333ea6a763f304b787f4b3f73e24e1f3b05a21b481900dfb
   languageName: node
   linkType: hard
 
@@ -1403,9 +1403,9 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"rollup@npm:2.45.2":
-  version: 2.45.2
-  resolution: "rollup@npm:2.45.2"
+"rollup@npm:2.46.0":
+  version: 2.46.0
+  resolution: "rollup@npm:2.46.0"
   dependencies:
     fsevents: ~2.3.1
   dependenciesMeta:
@@ -1413,7 +1413,7 @@ fsevents@~2.3.1:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: b07c6051c35ed30916f529cbfb3731c9ac10355daca167ba8d863bcda6499e39593e078eb8e29b4bf94a1e3d112e1cdfa908fe147a231b6a93b9fd6b732beb98
+  checksum: d06dfec49dee3ec6973cab356fb74a2446c08a0d64185826081f9755353a87826a51ae43d1c88f985a756eb4c74eedfbca97c6050a3e39a17cc6d96dd48505f8
   languageName: node
   linkType: hard
 
@@ -1706,10 +1706,10 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"svelte@npm:3.37.0":
-  version: 3.37.0
-  resolution: "svelte@npm:3.37.0"
-  checksum: fc7a1e9b641fbe938bd666b1d82433b5f262eb680635097bdf85f50753365c1fe5d51d387eadb3145b389df20f71e0576ba592cebfc44a2120971c96c4367f75
+"svelte@npm:3.38.0":
+  version: 3.38.0
+  resolution: "svelte@npm:3.38.0"
+  checksum: 5a08223f3d95b5ab9460c988a3abfc0fdd27a0d0ff19838c9313aec592d3577ffed5837e5e80a83d414fc9da5b318f9c510c30f901d554dee17001baf753a46f
   languageName: node
   linkType: hard
 

@@ -23,6 +23,18 @@
 
 	<body>
 		<form action="#xxx">
+			cep
+			<tadashi-pesquisa
+				verify="true"
+				target="#q2"
+				endpoint="https://service.teleport.com.br/cep/v1/gql"
+				query='{consulta(cep: "${value}") {cidade, end}}'
+			>
+				<input type="text" id="q2" name="q" class="pesquisa">
+			</tadashi-pesquisa>
+			<br>
+			<br>
+			placa
 			<tadashi-pesquisa
 				target="#q"
 				storage="token"

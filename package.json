@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/svelte-pesquisa",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Svelte component",
   "keywords": [
     "svelte",
@@ -41,9 +41,9 @@
     "@tadashi/flatten-object": "2.0.0",
     "@tadashi/unflatten-object": "1.0.2",
     "npm-run-all": "4.1.5",
-    "rollup": "2.45.2",
+    "rollup": "2.46.0",
     "rollup-plugin-svelte": "7.1.0",
     "sirv-cli": "1.0.11",
-    "svelte": "3.37.0"
+    "svelte": "3.38.0"
   }
 }

@@ -3,6 +3,9 @@
 <script>
 	import flatten from '@tadashi/flatten-object'
 	import unflatten from '@tadashi/unflatten-object'
+	import dispatch from '../lib/dispatch.js'
+	import request from '../lib/request.js'
+	import {qs} from '../lib/helper.js'
 
 	export let endpoint
 	export let target = undefined
@@ -13,39 +16,36 @@
 	export let key = 'id'
 	export let parse = false
 	export let shadow = false
+	export let verify = false
 
 	let node
 	let currentResponse
 	let isBusy = false
 	let items = []
 
-	// Helper - Prepare event and dispatch
-	function _dispatch(data, success) {
-		let _event
-		if (success) {
-			_event = new CustomEvent('response', {
-				detail: {...data},
-				bubbles: true,
-				composed: true
-			})
-		} else {
-			_event = new ErrorEvent('error', {
-				error: data,
-				message : data.message,
-				lineno : 62,
-				filename : 'Pesquisa.svelte',
-				bubbles: true,
-				composed: true
-			})
-		}
-
-		// Cleanup
-		items = []
-
-		// Dispatch event
-		node.dispatchEvent(_event)
+	// Workaround pro Nimble
+	let show = true
+	if (verify) {
+		const {config} = qs()
+		show = Number(config) === 1
 	}
 
+	// Fix attributes
+	function prepareProps() {
+		Reflect.deleteProperty($$restProps, 'class')
+		Reflect.deleteProperty($$restProps, 'type')
+		if (Reflect.has($$restProps, 'disabled')) {
+			Reflect.set($$restProps, 'disabled', true)
+		}
+		return $$restProps
+	}
+
+	// Clear items after dispatched
+	function cleanItems() {
+		items = []
+	}
+
+	// Make fetch
 	async function search(event) {
 		// Busy, so, ignore request
 		if (isBusy) {
@@ -54,6 +54,9 @@
 
 		// Get input element
 		const _target = document.querySelector(target)
+		if (_target instanceof HTMLInputElement === false) {
+			throw new TypeError('The target should be a HTMLInputElement')
+		}
 
 		// Get value
 		const value = _target?.value
@@ -61,47 +64,13 @@
 			return
 		}
 
-		// Prepare request
-		let body = {value}
-		if (query) {
-			const _query = query.replace(match, value)
-			body = {
-				query: _query
-			}
-		}
-		body = JSON.stringify(body)
-
-		// Default header
-		const headers = {
-			'Content-Type': 'application/json'
-		}
-
-		// Authorization via attributes
-		if (auth) {
-			headers.Authorization = auth
-		}
-
-		// Authorization via localStorage
-		if (storage) {
-			headers.Authorization = `Bearer ${globalThis.localStorage.getItem(storage)}`
-		}
-
-		// Event to dispatch
-		let _event
-
 		try {
 			// Now is busy
 			isBusy = true
 
 			// Make the fetch
-			const response = await fetch(endpoint, {
-				method: 'POST',
-				mode: 'cors',
-				cache: 'default',
-				credentials: 'include',
-				redirect: 'follow',
-				headers,
-				body
+			const response = await request(endpoint, {
+				value, query, match, auth, storage
 			})
 
 			// HttpError
@@ -128,15 +97,14 @@
 					currentResponse = flat
 					return
 				}
-				items = []
 			}
 
 			// Dispatch success
-			_dispatch(currentResponse, true)
+			dispatch(currentResponse, node, true, cleanItems)
 		} catch (error) {
 			console.error('Pesquisa Error', {...error})
 			// Dispatch error
-			_dispatch(error, false)
+			dispatch(error, node, false, cleanItems)
 		} finally {
 			// Free
 			isBusy = false
@@ -146,31 +114,36 @@
 	function itemSelected(idx) {
 		return () => {
 			currentResponse[parse] = [currentResponse[parse][idx]]
-			_dispatch(unflatten(currentResponse), true)
+			dispatch(unflatten(currentResponse), node, true, cleanItems)
 		}
 	}
 </script>
 
-<div class="_tadashi_pesquisa">
-	<div class="_tadashi_pesquisa__target">
-		<slot />
-		{#if items && items.length > 0}
-			<div class="_tadashi_pesquisa__items">
-				{#each items as item, idx (item?.[key ?? 'id'] ?? item)}
-					<div class="_tadashi_pesquisa__item" on:click={itemSelected(idx)}>{item?.[key ?? 'id']}</div>
-				{/each}
-			</div>
-		{/if}
+{#if show}
+	<div class="_tadashi_pesquisa">
+		<div class="_tadashi_pesquisa__target">
+			<slot />
+			{#if items && items.length > 0}
+				<div class="_tadashi_pesquisa__items">
+					{#each items as item, idx (item?.[key ?? 'id'] ?? item)}
+						<div class="_tadashi_pesquisa__item" on:click={itemSelected(idx)}>{item?.[key ?? 'id']}</div>
+					{/each}
+				</div>
+			{/if}
+		</div>
+		<button
+			type="button"
+			class="_tadashi_pesquisa__trigger"
+			class:_tadashi_pesquisa__trigger___loading={isBusy}
+			class:_tadashi_pesquisa__trigger___shadow={shadow}
+			bind:this={node}
+			on:click={search}
+			{...prepareProps()}
+		>✓</button>
 	</div>
-	<button
-		type="button"
-		class="_tadashi_pesquisa__trigger"
-		bind:this={node}
-		class:_tadashi_pesquisa__trigger___loading={isBusy}
-		class:_tadashi_pesquisa__trigger___shadow={shadow}
-		on:click={search}
-	>✓</button>
-</div>
+{:else}
+	<slot />
+{/if}
 
 <style>
 	:host {
