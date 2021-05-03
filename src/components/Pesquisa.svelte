@@ -3,12 +3,12 @@
 <script>
 	import flatten from '@tadashi/flatten-object'
 	import unflatten from '@tadashi/unflatten-object'
+	import {onMount} from 'svelte'
+	import {qs} from '../lib/helper.js'
 	import dispatch from '../lib/dispatch.js'
 	import request from '../lib/request.js'
-	import {qs} from '../lib/helper.js'
 
 	export let endpoint
-	export let target = undefined
 	export let auth = undefined
 	export let storage = undefined
 	export let query = undefined
@@ -18,16 +18,18 @@
 	export let shadow = false
 	export let verify = false
 
+	let element
+	let slotted
 	let node
 	let currentResponse
 	let isBusy = false
 	let items = []
 
-	// Workaround pro Nimble
+	// Workaround (tmp)
 	let show = true
 	if (verify) {
-		const {config} = qs()
-		show = Number(config) === 1
+		const {consulta} = qs()
+		show = Number(consulta) === 1
 	}
 
 	// Fix attributes
@@ -46,20 +48,19 @@
 	}
 
 	// Make fetch
-	async function search(event) {
+	async function search() {
 		// Busy, so, ignore request
 		if (isBusy) {
 			return
 		}
 
-		// Get input element
-		const _target = document.querySelector(target)
-		if (_target instanceof HTMLInputElement === false) {
-			throw new TypeError('The target should be a HTMLInputElement')
+		// Check element
+		if (element instanceof HTMLInputElement === false) {
+			throw new TypeError('The element should be a HTMLInputElement')
 		}
 
 		// Get value
-		const value = _target?.value
+		const value = element?.value
 		if (!value) {
 			return
 		}
@@ -102,7 +103,6 @@
 			// Dispatch success
 			dispatch(currentResponse, node, true, cleanItems)
 		} catch (error) {
-			console.error('Pesquisa Error', {...error})
 			// Dispatch error
 			dispatch(error, node, false, cleanItems)
 		} finally {
@@ -117,12 +117,45 @@
 			dispatch(unflatten(currentResponse), node, true, cleanItems)
 		}
 	}
+
+	function searchBeforeInput(event) {
+		if (event?.inputType === 'insertLineBreak') {
+			event.preventDefault()
+			search()
+		}
+	}
+
+	function mountElement() {
+		if (element instanceof HTMLInputElement === false) {
+			for (const _element of slotted.assignedElements({flatten: true})) {
+				if (_element instanceof HTMLInputElement === true) {
+					element = _element
+					element.addEventListener('beforeinput', searchBeforeInput)
+					break
+				}
+			}
+		}
+
+		return () => {
+			if (element) {
+				element.removeEventListener('beforeinput', searchBeforeInput)
+			}
+		}
+	}
+
+	// Get input element
+	onMount(() => {
+		// Workaround (tmp)
+		if (show) {
+			return mountElement()
+		}
+	})
 </script>
 
 {#if show}
 	<div class="_tadashi_pesquisa">
 		<div class="_tadashi_pesquisa__target">
-			<slot />
+			<slot bind:this={slotted} />
 			{#if items && items.length > 0}
 				<div class="_tadashi_pesquisa__items">
 					{#each items as item, idx (item?.[key ?? 'id'] ?? item)}
@@ -142,7 +175,7 @@
 		>✓</button>
 	</div>
 {:else}
-	<slot />
+	<slot bind:this={slotted} />
 {/if}
 
 <style>

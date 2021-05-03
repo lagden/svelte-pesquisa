@@ -26,35 +26,31 @@
 			cep
 			<tadashi-pesquisa
 				verify="true"
-				target="#q2"
 				endpoint="https://service.teleport.com.br/cep/v1/gql"
 				query='{consulta(cep: "${value}") {cidade, end}}'
 			>
-				<input type="text" id="q2" name="q" class="pesquisa">
+				<input type="text" name="q" class="pesquisa">
 			</tadashi-pesquisa>
 			<br>
 			<br>
 			placa
 			<tadashi-pesquisa
-				target="#q"
 				storage="token"
 				parse="data.placa_chassi.mol"
 				key="MODELO"
 				endpoint="https://service.teleport.com.br/big-data/v1/gql"
 				query='{placa_chassi(value: "${value}") {ano_fabricacao, ano_modelo, chassi, cidade, cilindradas, combustivel, cor, especie_veiculo, estado, marca, modelo, placa, potencia, quantidade_eixos, quantidade_passageiros, tipo_carroceria, tipo_veiculo, mol { CODCAR, MODELO, MARCA, CODMARCA, INIFABR, FIMFABR, CODFIPE, CLASSE }}}'
 			>
-				<input type="text" id="q" name="q" class="pesquisa">
+				<input type="text" name="q" class="pesquisa">
 			</tadashi-pesquisa>
 		</form>
 		<script>
 			globalThis.localStorage.setItem('token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjp7ImlkIjo0ODA0MiwibmFtZSI6IkNhcmxvcyBDYXJvdGVudXRvIiwiZW1wcmVzYSI6OCwidW5pZGFkZSI6MSwiY29ycmV0b3JhIjoxLCJwcm9kdXRvciI6MTg3fSwiYXVkIjoiY2hhdDp0ZWxlcG9ydCIsImlzcyI6Imh0dHBzOi8vdGVsZXBvcnQuY29tLmJyIiwiaWF0IjoxNTk3OTYzODI1fQ.GzFUuFBos78mDy_FZjs6VaFxEijou7vaoDWqYbwoNmqD9HNdh1AOvbXdDSQBePeiKyqBgitglFjZY5RZHFomAw')
-			const pesquisa = document.querySelector('tadashi-pesquisa')
-			pesquisa.addEventListener('response', event => {
-				console.log(event)
-			})
-			pesquisa.addEventListener('error', event => {
-				console.log(event)
-			})
+			const pesquisas = document.querySelectorAll('tadashi-pesquisa')
+			for (const pesquisa of pesquisas) {
+				pesquisa.addEventListener('response', console.log)
+				pesquisa.addEventListener('error', console.debug)
+			}
 		</script>
 	</body>
 </html>
