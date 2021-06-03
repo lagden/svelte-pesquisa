@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
-'use strict'
-
-import path from 'path'
-import {promises, createWriteStream} from 'fs'
-import {promisify} from 'util'
-import child_process from 'child_process'
+import path from 'node:path'
+import {promises, createWriteStream} from 'node:fs'
+import {promisify} from 'node:util'
+import child_process from 'node:child_process'
 
 async function read(file, options = {}) {
 	let filehandle

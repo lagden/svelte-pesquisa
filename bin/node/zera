@@ -1,9 +1,10 @@
 #!/bin/bash
 
-DIR="$(cd -P "$(dirname "$0")" && pwd)"
+DIR="$(cd $(dirname $0) && pwd)"
+BIN_DIR="$(cd $DIR/.. && pwd)"
 
 # Import functions
-. $DIR/_fn
+. $BIN_DIR/helper/fn
 
 # Go to current directory
 CURR_FOLDER="$(pwd)"

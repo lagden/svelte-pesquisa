@@ -4,9 +4,9 @@
 	import flatten from '@tadashi/flatten-object'
 	import unflatten from '@tadashi/unflatten-object'
 	import {onMount} from 'svelte'
-	import {qs} from '../lib/helper.js'
-	import dispatch from '../lib/dispatch.js'
-	import request from '../lib/request.js'
+	import {parseBooleans, getEl} from './lib/helper.js'
+	import dispatch from './lib/dispatch.js'
+	import request from './lib/request.js'
 
 	export let endpoint
 	export let auth = undefined
@@ -15,22 +15,17 @@
 	export let match = '${value}'
 	export let key = 'id'
 	export let parse = false
-	export let shadow = false
-	export let verify = false
+	export let show = true
 
 	let element
-	let slotted
+	let wrapper
+	let slot
 	let node
 	let currentResponse
 	let isBusy = false
 	let items = []
 
-	// Workaround (tmp)
-	let show = true
-	if (verify) {
-		const {consulta} = qs()
-		show = Number(consulta) === 1
-	}
+	$: _show = parseBooleans(show)
 
 	// Fix attributes
 	function prepareProps() {
@@ -125,15 +120,12 @@
 		}
 	}
 
-	function mountElement() {
-		if (element instanceof HTMLInputElement === false) {
-			for (const _element of slotted.assignedElements({flatten: true})) {
-				if (_element instanceof HTMLInputElement === true) {
-					element = _element
-					element.addEventListener('beforeinput', searchBeforeInput)
-					break
-				}
-			}
+	// Get input element
+	onMount(() => {
+		slot = wrapper.firstElementChild
+		element = getEl(slot)
+		if (element) {
+			element.addEventListener('beforeinput', searchBeforeInput)
 		}
 
 		return () => {
@@ -141,42 +133,32 @@
 				element.removeEventListener('beforeinput', searchBeforeInput)
 			}
 		}
-	}
-
-	// Get input element
-	onMount(() => {
-		// Workaround (tmp)
-		if (show) {
-			return mountElement()
-		}
 	})
 </script>
 
-{#if show}
-	<div class="_tadashi_pesquisa">
-		<div class="_tadashi_pesquisa__target">
-			<slot bind:this={slotted} />
-			{#if items && items.length > 0}
-				<div class="_tadashi_pesquisa__items">
-					{#each items as item, idx (item?.[key ?? 'id'] ?? item)}
-						<div class="_tadashi_pesquisa__item" on:click={itemSelected(idx)}>{item?.[key ?? 'id']}</div>
-					{/each}
-				</div>
-			{/if}
-		</div>
+
+<div class="_tadashi_pesquisa">
+	<div class="_tadashi_pesquisa__target" bind:this={wrapper}>
+		<slot />
+		{#if items && items.length > 0}
+			<div class="_tadashi_pesquisa__items">
+				{#each items as item, idx (item?.[key] ?? item)}
+					<div class="_tadashi_pesquisa__item" on:click={itemSelected(idx)}>{item?.[key]}</div>
+				{/each}
+			</div>
+		{/if}
+	</div>
+	{#if _show}
 		<button
 			type="button"
 			class="_tadashi_pesquisa__trigger"
 			class:_tadashi_pesquisa__trigger___loading={isBusy}
-			class:_tadashi_pesquisa__trigger___shadow={shadow}
 			bind:this={node}
 			on:click={search}
 			{...prepareProps()}
 		>✓</button>
-	</div>
-{:else}
-	<slot bind:this={slotted} />
-{/if}
+	{/if}
+</div>
 
 <style>
 	:host {
@@ -187,7 +169,8 @@
 		--tadashi_pesquisa__trigger_background_image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 512 512" width="16" height="16"><path fill="hsl(0deg 0% 100%)" d="M497.914 497.913c-18.783 18.782-49.225 18.782-68.008 0l-84.863-84.863c-34.888 22.382-76.13 35.717-120.659 35.717-123.915 0-224.384-100.454-224.384-224.384s100.469-224.383 224.384-224.383c123.931 0 224.384 100.452 224.384 224.383 0 44.514-13.352 85.771-35.718 120.676l84.864 84.863c18.781 18.782 18.781 49.209 0 67.991zM224.384 64.109c-88.511 0-160.274 71.747-160.274 160.273s71.763 160.274 160.274 160.274c88.526 0 160.274-71.748 160.274-160.274s-71.748-160.273-160.274-160.273z"></path></svg>');
 		--tadashi_pesquisa__trigger_border: none;
 		--tadashi_pesquisa__trigger_border_radius: 0.15em;
-		--tadashi_pesquisa__trigger_box_shadow: 0 0 8px hsla(0deg 0% 0% / 30%);
+		/*--tadashi_pesquisa__trigger_box_shadow: 0 0 8px hsla(0deg 0% 0% / 30%);*/
+		--tadashi_pesquisa__trigger_box_shadow: none;
 		--tadashi_pesquisa__trigger_color: hsl(0deg 0% 100% / 0%);
 		--tadashi_pesquisa__trigger_cursor: pointer;
 		--tadashi_pesquisa__trigger_filter_brightness: 1.3;
@@ -264,6 +247,7 @@
 		background-position: center;
 		border: var(--tadashi_pesquisa__trigger_border);
 		border-radius: var(--tadashi_pesquisa__trigger_border_radius);
+		box-shadow: var(--tadashi_pesquisa__trigger_box_shadow);
 		box-sizing: border-box;
 		color: var(--tadashi_pesquisa__trigger_color);
 		cursor: var(--tadashi_pesquisa__trigger_cursor);
@@ -282,10 +266,6 @@
 		grid-auto-flow: column;
 		grid-template-columns: auto;
 		grid-gap: var(--tadashi_pesquisa__trigger_grid_gap);
-	}
-
-	._tadashi_pesquisa__trigger___shadow {
-		box-shadow: var(--tadashi_pesquisa__trigger_box_shadow);
 	}
 
 	._tadashi_pesquisa__trigger___loading {

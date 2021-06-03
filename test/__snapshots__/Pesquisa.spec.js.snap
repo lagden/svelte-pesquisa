@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pesquisa should match snapshot default 1`] = `
+<body>
+  <div>
+    <div
+      class="_tadashi_pesquisa svelte-1wkg5ey"
+    >
+      <div
+        class="_tadashi_pesquisa__target svelte-1wkg5ey"
+      >
+         
+      </div>
+       
+      <button
+        class="_tadashi_pesquisa__trigger svelte-1wkg5ey"
+        type="button"
+      >
+        ✓
+      </button>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Pesquisa should match snapshot with slot 1`] = `
+<body>
+  <div>
+    <div
+      class="_tadashi_pesquisa svelte-1wkg5ey"
+    >
+      <div
+        class="_tadashi_pesquisa__target svelte-1wkg5ey"
+      >
+        <input
+          class="pesquisa"
+          name="q"
+          title="q"
+          type="text"
+        />
+         
+      </div>
+       
+      <button
+        class="_tadashi_pesquisa__trigger svelte-1wkg5ey"
+        title="btn"
+        type="button"
+      >
+        ✓
+      </button>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Pesquisa trigger should work 1`] = `
+<button
+  class="_tadashi_pesquisa__trigger svelte-1wkg5ey"
+  title="btn"
+  type="button"
+>
+  ✓
+</button>
+`;
+
+exports[`Pesquisa trigger should work 2`] = `
+<input
+  class="pesquisa"
+  name="q"
+  title="q"
+  type="text"
+/>
+`;

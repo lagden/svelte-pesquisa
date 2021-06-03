@@ -20,9 +20,9 @@ $ npm i -S @tadashi/svelte-pesquisa
 ## Usage
 
 ```html
-<script type="module" src="https://unpkg.com/@tadashi/svelte-pesquisa@0.1.0/dist/Pesquisa.js"></script>
+<script type="module" src="https://unpkg.com/@tadashi/svelte-pesquisa@{VERSION}/dist/Pesquisa.js"></script>
 
-<tadashi-pesquisa target="#q" endpoint="https://service.com.br/endpoint">
+<tadashi-pesquisa target="#q" endpoint="https://your.service.com.br/endpoint">
   <input type="text" id="q" name="q">
 </tadashi-pesquisa>
 ```

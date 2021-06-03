@@ -5,11 +5,6 @@ function assign(tar, src) {
         tar[k] = src[k];
     return tar;
 }
-function add_location(element, file, line, column, char) {
-    element.__svelte_meta = {
-        loc: { file, line, column, char }
-    };
-}
 function run(fn) {
     return fn();
 }
@@ -44,43 +39,14 @@ function compute_rest_props(props, keys) {
     return rest;
 }
 
-// Track which nodes are claimed during hydration. Unclaimed nodes can then be removed from the DOM
-// at the end of hydration without touching the remaining nodes.
-let is_hydrating = false;
-const nodes_to_detach = new Set();
-function start_hydrating() {
-    is_hydrating = true;
-}
-function end_hydrating() {
-    is_hydrating = false;
-    for (const node of nodes_to_detach) {
-        node.parentNode.removeChild(node);
-    }
-    nodes_to_detach.clear();
-}
 function append(target, node) {
-    if (is_hydrating) {
-        nodes_to_detach.delete(node);
-    }
-    if (node.parentNode !== target) {
-        target.appendChild(node);
-    }
+    target.appendChild(node);
 }
 function insert(target, node, anchor) {
-    if (is_hydrating) {
-        nodes_to_detach.delete(node);
-    }
-    if (node.parentNode !== target || (anchor && node.nextSibling !== anchor)) {
-        target.insertBefore(node, anchor || null);
-    }
+    target.insertBefore(node, anchor || null);
 }
 function detach(node) {
-    if (is_hydrating) {
-        nodes_to_detach.add(node);
-    }
-    else if (node.parentNode) {
-        node.parentNode.removeChild(node);
-    }
+    node.parentNode.removeChild(node);
 }
 function element(name) {
     return document.createElement(name);
@@ -90,9 +56,6 @@ function text(data) {
 }
 function space() {
     return text(' ');
-}
-function empty() {
-    return text('');
 }
 function listen(node, event, handler, options) {
     node.addEventListener(event, handler, options);
@@ -128,13 +91,13 @@ function set_attributes(node, attributes) {
 function children(element) {
     return Array.from(element.childNodes);
 }
+function set_data(text, data) {
+    data = '' + data;
+    if (text.wholeText !== data)
+        text.data = data;
+}
 function toggle_class(element, name, toggle) {
     element.classList[toggle ? 'add' : 'remove'](name);
-}
-function custom_event(type, detail) {
-    const e = document.createEvent('CustomEvent');
-    e.initCustomEvent(type, false, false, detail);
-    return e;
 }
 function attribute_to_object(attributes) {
     const result = {};
@@ -228,12 +191,6 @@ function transition_in(block, local) {
     }
 }
 
-const globals = (typeof window !== 'undefined'
-    ? window
-    : typeof globalThis !== 'undefined'
-        ? globalThis
-        : global);
-
 function destroy_block(block, lookup) {
     block.d(1);
     lookup.delete(block.key);
@@ -312,16 +269,6 @@ function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, looku
     while (n)
         insert(new_blocks[n - 1]);
     return new_blocks;
-}
-function validate_each_keys(ctx, list, get_context, get_key) {
-    const keys = new Set();
-    for (let i = 0; i < list.length; i++) {
-        const key = get_key(get_context(ctx, list, i));
-        if (keys.has(key)) {
-            throw new Error('Cannot have duplicate keys in a keyed each');
-        }
-        keys.add(key);
-    }
 }
 
 function get_spread_update(levels, updates) {
@@ -439,7 +386,6 @@ function init(component, options, instance, create_fragment, not_equal, props, d
     $$.fragment = create_fragment ? create_fragment($$.ctx) : false;
     if (options.target) {
         if (options.hydrate) {
-            start_hydrating();
             const nodes = children(options.target);
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             $$.fragment && $$.fragment.l(nodes);
@@ -452,7 +398,6 @@ function init(component, options, instance, create_fragment, not_equal, props, d
         if (options.intro)
             transition_in(component.$$.fragment);
         mount_component(component, options.target, options.anchor, options.customElement);
-        end_hydrating();
         flush();
     }
     set_current_component(parent_component);
@@ -501,65 +446,6 @@ if (typeof HTMLElement === 'function') {
             }
         }
     };
-}
-
-function dispatch_dev(type, detail) {
-    document.dispatchEvent(custom_event(type, Object.assign({ version: '3.38.0' }, detail)));
-}
-function append_dev(target, node) {
-    dispatch_dev('SvelteDOMInsert', { target, node });
-    append(target, node);
-}
-function insert_dev(target, node, anchor) {
-    dispatch_dev('SvelteDOMInsert', { target, node, anchor });
-    insert(target, node, anchor);
-}
-function detach_dev(node) {
-    dispatch_dev('SvelteDOMRemove', { node });
-    detach(node);
-}
-function listen_dev(node, event, handler, options, has_prevent_default, has_stop_propagation) {
-    const modifiers = options === true ? ['capture'] : options ? Array.from(Object.keys(options)) : [];
-    if (has_prevent_default)
-        modifiers.push('preventDefault');
-    if (has_stop_propagation)
-        modifiers.push('stopPropagation');
-    dispatch_dev('SvelteDOMAddEventListener', { node, event, handler, modifiers });
-    const dispose = listen(node, event, handler, options);
-    return () => {
-        dispatch_dev('SvelteDOMRemoveEventListener', { node, event, handler, modifiers });
-        dispose();
-    };
-}
-function attr_dev(node, attribute, value) {
-    attr(node, attribute, value);
-    if (value == null)
-        dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
-    else
-        dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
-}
-function set_data_dev(text, data) {
-    data = '' + data;
-    if (text.wholeText === data)
-        return;
-    dispatch_dev('SvelteDOMSetData', { node: text, data });
-    text.data = data;
-}
-function validate_each_argument(arg) {
-    if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
-        let msg = '{#each} only iterates over array-like objects.';
-        if (typeof Symbol === 'function' && arg && Symbol.iterator in arg) {
-            msg += ' You can use a spread to convert this iterable into an array.';
-        }
-        throw new Error(msg);
-    }
-}
-function validate_slots(name, slot, keys) {
-    for (const slot_key of Object.keys(slot)) {
-        if (!~keys.indexOf(slot_key)) {
-            console.warn(`<${name}> received an unexpected slot "${slot_key}".`);
-        }
-    }
 }
 
 /**
@@ -2616,42 +2502,62 @@ var unflattenObject_1 = unflattenObject;
  * Helper para ler a query string
  * @return {object} Retorna um objeto URLSearchParams
  */
-function params() {
-	const url = new URL(globalThis.location);
-	return new URLSearchParams(url.search)
+
+/**
+ * Helper converte um valor para boolean
+ * @param {*} v - Valor que será convertido para boolean
+ * @return {(boolean|string)} Se sucesso retorna o boolean
+ */
+function parseBooleans(v) {
+	if (typeof v === 'boolean') {
+		return v
+	}
+
+	const boolRegex = /^(?:true|false|1|0)$/i;
+	if (boolRegex.test(v)) {
+		v = v.toLowerCase() === 'true' || v === '1';
+	}
+	return v
 }
 
 /**
- * Helper para ler a query string
- * @return {object} Retorna um objeto URLSearchParams
+ * Helper para localizar no DOM o primeiro elemento input
+ * @return {object} Retorna um objeto HTMLInputElement
  */
-function qs() {
-	const data = {};
-	for (const [k, v] of params()) {
-		data[k] = v;
+function getEl(node) {
+	let element;
+	if (node && node instanceof HTMLInputElement) {
+		return node
 	}
-	return data
+
+	if (typeof node?.assignedElements === 'function') {
+		for (const _element of node.assignedElements({flatten: true})) {
+			if (_element instanceof HTMLInputElement === true) {
+				element = _element;
+				break
+			}
+		}
+	}
+
+	return element
 }
 
 // Helper - Prepare event and dispatch
 function dispatch(data, node, success, cb) {
-	let _event;
-	if (success) {
-		_event = new CustomEvent('response', {
+	const _event = success ?
+		new CustomEvent('response', {
 			detail: {...data},
 			bubbles: true,
 			composed: true
-		});
-	} else {
-		_event = new ErrorEvent('error', {
+		}) :
+		new ErrorEvent('error', {
 			error: data,
-			message : data.message,
-			lineno : 72,
-			filename : 'Pesquisa.svelte',
+			message: data.message,
+			lineno: 72,
+			filename: 'Pesquisa.svelte',
 			bubbles: true,
 			composed: true
 		});
-	}
 
 	// Dispatch event
 	node.dispatchEvent(_event);
@@ -2701,66 +2607,114 @@ function request(endpoint, opts) {
 	})
 }
 
-/* src/components/Pesquisa.svelte generated by Svelte v3.38.0 */
-
-const { Error: Error_1 } = globals;
-const file = "src/components/Pesquisa.svelte";
+/* src/Pesquisa.svelte generated by Svelte v3.38.2 */
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[26] = list[i];
-	child_ctx[28] = i;
+	child_ctx[24] = list[i];
+	child_ctx[26] = i;
 	return child_ctx;
 }
 
-// (177:0) {:else}
-function create_else_block(ctx) {
-	let slot;
+// (143:2) {#if items && items.length > 0}
+function create_if_block_1(ctx) {
+	let div;
+	let each_blocks = [];
+	let each_1_lookup = new Map();
+	let each_value = /*items*/ ctx[4];
+	const get_key = ctx => /*item*/ ctx[24]?.[/*key*/ ctx[0]] ?? /*item*/ ctx[24];
 
-	const block = {
-		c: function create() {
-			slot = element("slot");
-			add_location(slot, file, 177, 1, 3987);
+	for (let i = 0; i < each_value.length; i += 1) {
+		let child_ctx = get_each_context(ctx, each_value, i);
+		let key = get_key(child_ctx);
+		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
+	}
+
+	return {
+		c() {
+			div = element("div");
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].c();
+			}
+
+			attr(div, "class", "_tadashi_pesquisa__items");
 		},
-		m: function mount(target, anchor) {
-			insert_dev(target, slot, anchor);
-			/*slot_binding_1*/ ctx[19](slot);
+		m(target, anchor) {
+			insert(target, div, anchor);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].m(div, null);
+			}
 		},
-		p: noop,
-		d: function destroy(detaching) {
-			if (detaching) detach_dev(slot);
-			/*slot_binding_1*/ ctx[19](null);
+		p(ctx, dirty) {
+			if (dirty & /*itemSelected, items, key*/ 273) {
+				each_value = /*items*/ ctx[4];
+				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div, destroy_block, create_each_block, null, get_each_context);
+			}
+		},
+		d(detaching) {
+			if (detaching) detach(div);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].d();
+			}
 		}
 	};
-
-	dispatch_dev("SvelteRegisterBlock", {
-		block,
-		id: create_else_block.name,
-		type: "else",
-		source: "(177:0) {:else}",
-		ctx
-	});
-
-	return block;
 }
 
-// (155:0) {#if show}
-function create_if_block(ctx) {
-	let div1;
-	let div0;
-	let slot;
-	let t0;
-	let t1;
-	let button;
-	let t2;
+// (145:4) {#each items as item, idx (item?.[key] ?? item)}
+function create_each_block(key_2, ctx) {
+	let div;
+	let t_value = /*item*/ ctx[24]?.[/*key*/ ctx[0]] + "";
+	let t;
 	let mounted;
 	let dispose;
-	let if_block = /*items*/ ctx[5] && /*items*/ ctx[5].length > 0 && create_if_block_1(ctx);
+
+	return {
+		key: key_2,
+		first: null,
+		c() {
+			div = element("div");
+			t = text(t_value);
+			attr(div, "class", "_tadashi_pesquisa__item");
+			this.first = div;
+		},
+		m(target, anchor) {
+			insert(target, div, anchor);
+			append(div, t);
+
+			if (!mounted) {
+				dispose = listen(div, "click", function () {
+					if (is_function(/*itemSelected*/ ctx[8](/*idx*/ ctx[26]))) /*itemSelected*/ ctx[8](/*idx*/ ctx[26]).apply(this, arguments);
+				});
+
+				mounted = true;
+			}
+		},
+		p(new_ctx, dirty) {
+			ctx = new_ctx;
+			if (dirty & /*items, key*/ 17 && t_value !== (t_value = /*item*/ ctx[24]?.[/*key*/ ctx[0]] + "")) set_data(t, t_value);
+		},
+		d(detaching) {
+			if (detaching) detach(div);
+			mounted = false;
+			dispose();
+		}
+	};
+}
+
+// (151:1) {#if _show}
+function create_if_block(ctx) {
+	let button;
+	let t;
+	let mounted;
+	let dispose;
 
 	let button_levels = [
 		{ type: "button" },
 		{ class: "_tadashi_pesquisa__trigger" },
-		/*prepareProps*/ ctx[7]()
+		/*prepareProps*/ ctx[6]()
 	];
 
 	let button_data = {};
@@ -2769,269 +2723,115 @@ function create_if_block(ctx) {
 		button_data = assign(button_data, button_levels[i]);
 	}
 
-	const block = {
-		c: function create() {
-			div1 = element("div");
-			div0 = element("div");
-			slot = element("slot");
-			t0 = space();
-			if (if_block) if_block.c();
-			t1 = space();
+	return {
+		c() {
 			button = element("button");
-			t2 = text("✓");
-			add_location(slot, file, 157, 3, 3407);
-			attr_dev(div0, "class", "_tadashi_pesquisa__target");
-			add_location(div0, file, 156, 2, 3364);
+			t = text("✓");
 			set_attributes(button, button_data);
-			toggle_class(button, "_tadashi_pesquisa__trigger___loading", /*isBusy*/ ctx[4]);
-			toggle_class(button, "_tadashi_pesquisa__trigger___shadow", /*shadow*/ ctx[1]);
-			add_location(button, file, 166, 2, 3720);
-			attr_dev(div1, "class", "_tadashi_pesquisa");
-			add_location(div1, file, 155, 1, 3330);
+			toggle_class(button, "_tadashi_pesquisa__trigger___loading", /*isBusy*/ ctx[3]);
 		},
-		m: function mount(target, anchor) {
-			insert_dev(target, div1, anchor);
-			append_dev(div1, div0);
-			append_dev(div0, slot);
-			/*slot_binding*/ ctx[17](slot);
-			append_dev(div0, t0);
-			if (if_block) if_block.m(div0, null);
-			append_dev(div1, t1);
-			append_dev(div1, button);
-			append_dev(button, t2);
-			/*button_binding*/ ctx[18](button);
+		m(target, anchor) {
+			insert(target, button, anchor);
+			append(button, t);
+			/*button_binding*/ ctx[17](button);
 
 			if (!mounted) {
-				dispose = listen_dev(button, "click", /*search*/ ctx[8], false, false, false);
+				dispose = listen(button, "click", /*search*/ ctx[7]);
 				mounted = true;
 			}
 		},
-		p: function update(ctx, dirty) {
-			if (/*items*/ ctx[5] && /*items*/ ctx[5].length > 0) {
-				if (if_block) {
-					if_block.p(ctx, dirty);
-				} else {
-					if_block = create_if_block_1(ctx);
-					if_block.c();
-					if_block.m(div0, null);
-				}
-			} else if (if_block) {
-				if_block.d(1);
-				if_block = null;
-			}
-
+		p(ctx, dirty) {
 			set_attributes(button, button_data = get_spread_update(button_levels, [
 				{ type: "button" },
 				{ class: "_tadashi_pesquisa__trigger" },
-				/*prepareProps*/ ctx[7]()
+				/*prepareProps*/ ctx[6]()
 			]));
 
-			toggle_class(button, "_tadashi_pesquisa__trigger___loading", /*isBusy*/ ctx[4]);
-			toggle_class(button, "_tadashi_pesquisa__trigger___shadow", /*shadow*/ ctx[1]);
+			toggle_class(button, "_tadashi_pesquisa__trigger___loading", /*isBusy*/ ctx[3]);
 		},
-		d: function destroy(detaching) {
-			if (detaching) detach_dev(div1);
-			/*slot_binding*/ ctx[17](null);
-			if (if_block) if_block.d();
-			/*button_binding*/ ctx[18](null);
+		d(detaching) {
+			if (detaching) detach(button);
+			/*button_binding*/ ctx[17](null);
 			mounted = false;
 			dispose();
 		}
 	};
-
-	dispatch_dev("SvelteRegisterBlock", {
-		block,
-		id: create_if_block.name,
-		type: "if",
-		source: "(155:0) {#if show}",
-		ctx
-	});
-
-	return block;
-}
-
-// (159:3) {#if items && items.length > 0}
-function create_if_block_1(ctx) {
-	let div;
-	let each_blocks = [];
-	let each_1_lookup = new Map();
-	let each_value = /*items*/ ctx[5];
-	validate_each_argument(each_value);
-	const get_key = ctx => /*item*/ ctx[26]?.[/*key*/ ctx[0] ?? "id"] ?? /*item*/ ctx[26];
-	validate_each_keys(ctx, each_value, get_each_context, get_key);
-
-	for (let i = 0; i < each_value.length; i += 1) {
-		let child_ctx = get_each_context(ctx, each_value, i);
-		let key = get_key(child_ctx);
-		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
-	}
-
-	const block = {
-		c: function create() {
-			div = element("div");
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].c();
-			}
-
-			attr_dev(div, "class", "_tadashi_pesquisa__items");
-			add_location(div, file, 159, 4, 3475);
-		},
-		m: function mount(target, anchor) {
-			insert_dev(target, div, anchor);
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].m(div, null);
-			}
-		},
-		p: function update(ctx, dirty) {
-			if (dirty & /*itemSelected, items, key*/ 545) {
-				each_value = /*items*/ ctx[5];
-				validate_each_argument(each_value);
-				validate_each_keys(ctx, each_value, get_each_context, get_key);
-				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div, destroy_block, create_each_block, null, get_each_context);
-			}
-		},
-		d: function destroy(detaching) {
-			if (detaching) detach_dev(div);
-
-			for (let i = 0; i < each_blocks.length; i += 1) {
-				each_blocks[i].d();
-			}
-		}
-	};
-
-	dispatch_dev("SvelteRegisterBlock", {
-		block,
-		id: create_if_block_1.name,
-		type: "if",
-		source: "(159:3) {#if items && items.length > 0}",
-		ctx
-	});
-
-	return block;
-}
-
-// (161:5) {#each items as item, idx (item?.[key ?? 'id'] ?? item)}
-function create_each_block(key_2, ctx) {
-	let div;
-	let t_value = /*item*/ ctx[26]?.[/*key*/ ctx[0] ?? "id"] + "";
-	let t;
-	let mounted;
-	let dispose;
-
-	const block = {
-		key: key_2,
-		first: null,
-		c: function create() {
-			div = element("div");
-			t = text(t_value);
-			attr_dev(div, "class", "_tadashi_pesquisa__item");
-			add_location(div, file, 161, 6, 3582);
-			this.first = div;
-		},
-		m: function mount(target, anchor) {
-			insert_dev(target, div, anchor);
-			append_dev(div, t);
-
-			if (!mounted) {
-				dispose = listen_dev(
-					div,
-					"click",
-					function () {
-						if (is_function(/*itemSelected*/ ctx[9](/*idx*/ ctx[28]))) /*itemSelected*/ ctx[9](/*idx*/ ctx[28]).apply(this, arguments);
-					},
-					false,
-					false,
-					false
-				);
-
-				mounted = true;
-			}
-		},
-		p: function update(new_ctx, dirty) {
-			ctx = new_ctx;
-			if (dirty & /*items, key*/ 33 && t_value !== (t_value = /*item*/ ctx[26]?.[/*key*/ ctx[0] ?? "id"] + "")) set_data_dev(t, t_value);
-		},
-		d: function destroy(detaching) {
-			if (detaching) detach_dev(div);
-			mounted = false;
-			dispose();
-		}
-	};
-
-	dispatch_dev("SvelteRegisterBlock", {
-		block,
-		id: create_each_block.name,
-		type: "each",
-		source: "(161:5) {#each items as item, idx (item?.[key ?? 'id'] ?? item)}",
-		ctx
-	});
-
-	return block;
 }
 
 function create_fragment(ctx) {
-	let if_block_anchor;
+	let div1;
+	let div0;
+	let slot_1;
+	let t0;
+	let t1;
+	let if_block0 = /*items*/ ctx[4] && /*items*/ ctx[4].length > 0 && create_if_block_1(ctx);
+	let if_block1 = /*_show*/ ctx[5] && create_if_block(ctx);
 
-	function select_block_type(ctx, dirty) {
-		if (/*show*/ ctx[6]) return create_if_block;
-		return create_else_block;
-	}
-
-	let current_block_type = select_block_type(ctx);
-	let if_block = current_block_type(ctx);
-
-	const block = {
-		c: function create() {
-			if_block.c();
-			if_block_anchor = empty();
+	return {
+		c() {
+			div1 = element("div");
+			div0 = element("div");
+			slot_1 = element("slot");
+			t0 = space();
+			if (if_block0) if_block0.c();
+			t1 = space();
+			if (if_block1) if_block1.c();
 			this.c = noop;
+			attr(div0, "class", "_tadashi_pesquisa__target");
+			attr(div1, "class", "_tadashi_pesquisa");
 		},
-		l: function claim(nodes) {
-			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+		m(target, anchor) {
+			insert(target, div1, anchor);
+			append(div1, div0);
+			append(div0, slot_1);
+			append(div0, t0);
+			if (if_block0) if_block0.m(div0, null);
+			/*div0_binding*/ ctx[16](div0);
+			append(div1, t1);
+			if (if_block1) if_block1.m(div1, null);
 		},
-		m: function mount(target, anchor) {
-			if_block.m(target, anchor);
-			insert_dev(target, if_block_anchor, anchor);
-		},
-		p: function update(ctx, [dirty]) {
-			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
-				if_block.p(ctx, dirty);
-			} else {
-				if_block.d(1);
-				if_block = current_block_type(ctx);
-
-				if (if_block) {
-					if_block.c();
-					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+		p(ctx, [dirty]) {
+			if (/*items*/ ctx[4] && /*items*/ ctx[4].length > 0) {
+				if (if_block0) {
+					if_block0.p(ctx, dirty);
+				} else {
+					if_block0 = create_if_block_1(ctx);
+					if_block0.c();
+					if_block0.m(div0, null);
 				}
+			} else if (if_block0) {
+				if_block0.d(1);
+				if_block0 = null;
+			}
+
+			if (/*_show*/ ctx[5]) {
+				if (if_block1) {
+					if_block1.p(ctx, dirty);
+				} else {
+					if_block1 = create_if_block(ctx);
+					if_block1.c();
+					if_block1.m(div1, null);
+				}
+			} else if (if_block1) {
+				if_block1.d(1);
+				if_block1 = null;
 			}
 		},
 		i: noop,
 		o: noop,
-		d: function destroy(detaching) {
-			if_block.d(detaching);
-			if (detaching) detach_dev(if_block_anchor);
+		d(detaching) {
+			if (detaching) detach(div1);
+			if (if_block0) if_block0.d();
+			/*div0_binding*/ ctx[16](null);
+			if (if_block1) if_block1.d();
 		}
 	};
-
-	dispatch_dev("SvelteRegisterBlock", {
-		block,
-		id: create_fragment.name,
-		type: "component",
-		source: "",
-		ctx
-	});
-
-	return block;
 }
 
 function instance($$self, $$props, $$invalidate) {
-	const omit_props_names = ["endpoint","auth","storage","query","match","key","parse","shadow","verify"];
+	let _show;
+	const omit_props_names = ["endpoint","auth","storage","query","match","key","parse","show"];
 	let $$restProps = compute_rest_props($$props, omit_props_names);
-	let { $$slots: slots = {}, $$scope } = $$props;
-	validate_slots("tadashi-pesquisa", slots, []);
 	let { endpoint } = $$props;
 	let { auth = undefined } = $$props;
 	let { storage = undefined } = $$props;
@@ -3039,22 +2839,14 @@ function instance($$self, $$props, $$invalidate) {
 	let { match = "${value}" } = $$props;
 	let { key = "id" } = $$props;
 	let { parse = false } = $$props;
-	let { shadow = false } = $$props;
-	let { verify = false } = $$props;
+	let { show = true } = $$props;
 	let element;
-	let slotted;
+	let wrapper;
+	let slot;
 	let node;
 	let currentResponse;
 	let isBusy = false;
 	let items = [];
-
-	// Workaround (tmp)
-	let show = true;
-
-	if (verify) {
-		const { consulta } = qs();
-		show = Number(consulta) === 1;
-	}
 
 	// Fix attributes
 	function prepareProps() {
@@ -3070,7 +2862,7 @@ function instance($$self, $$props, $$invalidate) {
 
 	// Clear items after dispatched
 	function cleanItems() {
-		$$invalidate(5, items = []);
+		$$invalidate(4, items = []);
 	}
 
 	// Make fetch
@@ -3094,7 +2886,7 @@ function instance($$self, $$props, $$invalidate) {
 
 		try {
 			// Now is busy
-			$$invalidate(4, isBusy = true);
+			$$invalidate(3, isBusy = true);
 
 			// Make the fetch
 			const response = await request(endpoint, { value, query, match, auth, storage });
@@ -3122,7 +2914,7 @@ function instance($$self, $$props, $$invalidate) {
 				const preItems = (Array.isArray(_data) && _data.length > 0 && _data) ?? [];
 
 				if (preItems.length > 1) {
-					$$invalidate(5, items = [...preItems]);
+					$$invalidate(4, items = [...preItems]);
 					currentResponse = flat;
 					return;
 				}
@@ -3135,7 +2927,7 @@ function instance($$self, $$props, $$invalidate) {
 			dispatch(error, node, false, cleanItems);
 		} finally {
 			// Free
-			$$invalidate(4, isBusy = false);
+			$$invalidate(3, isBusy = false);
 		}
 	}
 
@@ -3153,15 +2945,13 @@ function instance($$self, $$props, $$invalidate) {
 		}
 	}
 
-	function mountElement() {
-		if (element instanceof HTMLInputElement === false) {
-			for (const _element of slotted.assignedElements({ flatten: true })) {
-				if (_element instanceof HTMLInputElement === true) {
-					element = _element;
-					element.addEventListener("beforeinput", searchBeforeInput);
-					break;
-				}
-			}
+	// Get input element
+	onMount(() => {
+		slot = wrapper.firstElementChild;
+		element = getEl(slot);
+
+		if (element) {
+			element.addEventListener("beforeinput", searchBeforeInput);
 		}
 
 		return () => {
@@ -3169,113 +2959,48 @@ function instance($$self, $$props, $$invalidate) {
 				element.removeEventListener("beforeinput", searchBeforeInput);
 			}
 		};
-	}
-
-	// Get input element
-	onMount(() => {
-		// Workaround (tmp)
-		if (show) {
-			return mountElement();
-		}
 	});
 
-	function slot_binding($$value) {
+	function div0_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
-			slotted = $$value;
-			$$invalidate(2, slotted);
+			wrapper = $$value;
+			$$invalidate(1, wrapper);
 		});
 	}
 
 	function button_binding($$value) {
 		binding_callbacks[$$value ? "unshift" : "push"](() => {
 			node = $$value;
-			$$invalidate(3, node);
-		});
-	}
-
-	function slot_binding_1($$value) {
-		binding_callbacks[$$value ? "unshift" : "push"](() => {
-			slotted = $$value;
-			$$invalidate(2, slotted);
+			$$invalidate(2, node);
 		});
 	}
 
 	$$self.$$set = $$new_props => {
 		$$props = assign(assign({}, $$props), exclude_internal_props($$new_props));
-		$$invalidate(25, $$restProps = compute_rest_props($$props, omit_props_names));
-		if ("endpoint" in $$new_props) $$invalidate(10, endpoint = $$new_props.endpoint);
-		if ("auth" in $$new_props) $$invalidate(11, auth = $$new_props.auth);
-		if ("storage" in $$new_props) $$invalidate(12, storage = $$new_props.storage);
-		if ("query" in $$new_props) $$invalidate(13, query = $$new_props.query);
-		if ("match" in $$new_props) $$invalidate(14, match = $$new_props.match);
+		$$invalidate(23, $$restProps = compute_rest_props($$props, omit_props_names));
+		if ("endpoint" in $$new_props) $$invalidate(9, endpoint = $$new_props.endpoint);
+		if ("auth" in $$new_props) $$invalidate(10, auth = $$new_props.auth);
+		if ("storage" in $$new_props) $$invalidate(11, storage = $$new_props.storage);
+		if ("query" in $$new_props) $$invalidate(12, query = $$new_props.query);
+		if ("match" in $$new_props) $$invalidate(13, match = $$new_props.match);
 		if ("key" in $$new_props) $$invalidate(0, key = $$new_props.key);
-		if ("parse" in $$new_props) $$invalidate(15, parse = $$new_props.parse);
-		if ("shadow" in $$new_props) $$invalidate(1, shadow = $$new_props.shadow);
-		if ("verify" in $$new_props) $$invalidate(16, verify = $$new_props.verify);
+		if ("parse" in $$new_props) $$invalidate(14, parse = $$new_props.parse);
+		if ("show" in $$new_props) $$invalidate(15, show = $$new_props.show);
 	};
 
-	$$self.$capture_state = () => ({
-		flatten: flattenObject_1,
-		unflatten: unflattenObject_1,
-		onMount,
-		qs,
-		dispatch,
-		request,
-		endpoint,
-		auth,
-		storage,
-		query,
-		match,
-		key,
-		parse,
-		shadow,
-		verify,
-		element,
-		slotted,
-		node,
-		currentResponse,
-		isBusy,
-		items,
-		show,
-		prepareProps,
-		cleanItems,
-		search,
-		itemSelected,
-		searchBeforeInput,
-		mountElement
-	});
-
-	$$self.$inject_state = $$new_props => {
-		if ("endpoint" in $$props) $$invalidate(10, endpoint = $$new_props.endpoint);
-		if ("auth" in $$props) $$invalidate(11, auth = $$new_props.auth);
-		if ("storage" in $$props) $$invalidate(12, storage = $$new_props.storage);
-		if ("query" in $$props) $$invalidate(13, query = $$new_props.query);
-		if ("match" in $$props) $$invalidate(14, match = $$new_props.match);
-		if ("key" in $$props) $$invalidate(0, key = $$new_props.key);
-		if ("parse" in $$props) $$invalidate(15, parse = $$new_props.parse);
-		if ("shadow" in $$props) $$invalidate(1, shadow = $$new_props.shadow);
-		if ("verify" in $$props) $$invalidate(16, verify = $$new_props.verify);
-		if ("element" in $$props) element = $$new_props.element;
-		if ("slotted" in $$props) $$invalidate(2, slotted = $$new_props.slotted);
-		if ("node" in $$props) $$invalidate(3, node = $$new_props.node);
-		if ("currentResponse" in $$props) currentResponse = $$new_props.currentResponse;
-		if ("isBusy" in $$props) $$invalidate(4, isBusy = $$new_props.isBusy);
-		if ("items" in $$props) $$invalidate(5, items = $$new_props.items);
-		if ("show" in $$props) $$invalidate(6, show = $$new_props.show);
+	$$self.$$.update = () => {
+		if ($$self.$$.dirty & /*show*/ 32768) {
+			$$invalidate(5, _show = parseBooleans(show));
+		}
 	};
-
-	if ($$props && "$$inject" in $$props) {
-		$$self.$inject_state($$props.$$inject);
-	}
 
 	return [
 		key,
-		shadow,
-		slotted,
+		wrapper,
 		node,
 		isBusy,
 		items,
-		show,
+		_show,
 		prepareProps,
 		search,
 		itemSelected,
@@ -3285,17 +3010,16 @@ function instance($$self, $$props, $$invalidate) {
 		query,
 		match,
 		parse,
-		verify,
-		slot_binding,
-		button_binding,
-		slot_binding_1
+		show,
+		div0_binding,
+		button_binding
 	];
 }
 
 class Pesquisa extends SvelteElement {
 	constructor(options) {
 		super();
-		this.shadowRoot.innerHTML = `<style>:host{--tadashi_pesquisa_grid_gap:0.5em;--tadashi_pesquisa__trigger_align_items:center;--tadashi_pesquisa__trigger_background_color:hsl(210deg 50% 50%);--tadashi_pesquisa__trigger_background_image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 512 512" width="16" height="16"><path fill="hsl(0deg 0% 100%)" d="M497.914 497.913c-18.783 18.782-49.225 18.782-68.008 0l-84.863-84.863c-34.888 22.382-76.13 35.717-120.659 35.717-123.915 0-224.384-100.454-224.384-224.384s100.469-224.383 224.384-224.383c123.931 0 224.384 100.452 224.384 224.383 0 44.514-13.352 85.771-35.718 120.676l84.864 84.863c18.781 18.782 18.781 49.209 0 67.991zM224.384 64.109c-88.511 0-160.274 71.747-160.274 160.273s71.763 160.274 160.274 160.274c88.526 0 160.274-71.748 160.274-160.274s-71.748-160.273-160.274-160.273z"></path></svg>');--tadashi_pesquisa__trigger_border:none;--tadashi_pesquisa__trigger_border_radius:0.15em;--tadashi_pesquisa__trigger_box_shadow:0 0 8px hsla(0deg 0% 0% / 30%);--tadashi_pesquisa__trigger_color:hsl(0deg 0% 100% / 0%);--tadashi_pesquisa__trigger_cursor:pointer;--tadashi_pesquisa__trigger_filter_brightness:1.3;--tadashi_pesquisa__trigger_font_size:1em;--tadashi_pesquisa__trigger_font_weight:300;--tadashi_pesquisa__trigger_grid_gap:5px;--tadashi_pesquisa__trigger_height:36px;--tadashi_pesquisa__trigger_outline:0;--tadashi_pesquisa__trigger_opacity:0.5;--tadashi_pesquisa__trigger_padding:0;--tadashi_pesquisa__trigger_transition_duration:0.5s;--tadashi_pesquisa__trigger_width:36px;--tadashi_pesquisa__trigger___loading_background_image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 100 100" width="40" height="40"><path fill="hsl(0deg 0% 100%)" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"><animateTransform attributeName="transform" attributeType="XML" type="rotate" dur="0.5s" from="0 50 50" to="360 50 50" repeatCount="indefinite" /></path></svg>');--tadashi_pesquisa__items_grid_gap:0.3em;--tadashi_pesquisa__items_top:calc(100% + 3px);--tadashi_pesquisa__items_background_color:hsl(225deg 5% 17%);--tadashi_pesquisa__items_color:hsl(0deg 0% 100%);--tadashi_pesquisa__items_border_radius:3px;--tadashi_pesquisa__item_padding:0.7em;--tadashi_pesquisa__item_border_radius:3px;--tadashi_pesquisa__item___hover_background_color:hsl(225deg 3% 30%);--tadashi_pesquisa__item___active_background_color:hsl(225deg 3% 30%)}._tadashi_pesquisa{position:relative;display:grid;align-items:center;grid-gap:var(--tadashi_pesquisa_grid_gap);grid-template-columns:1fr auto}._tadashi_pesquisa__target{position:relative}._tadashi_pesquisa__items{display:grid;grid-gap:var(--tadashi_pesquisa__items_grid_gap);grid-template-columns:1fr;width:100%;position:absolute;top:var(--tadashi_pesquisa__items_top);right:auto;bottom:auto;left:auto;background-color:var(--tadashi_pesquisa__items_background_color);color:var(--tadashi_pesquisa__items_color);border-radius:var(--tadashi_pesquisa__items_border_radius)}._tadashi_pesquisa__item{cursor:pointer;padding:var(--tadashi_pesquisa__item_padding);border-radius:var(--tadashi_pesquisa__item_border_radius)}._tadashi_pesquisa__item:hover{background-color:var(--tadashi_pesquisa__item___hover_background_color)}._tadashi_pesquisa__item:active{background-color:var(--tadashi_pesquisa__item___active_background_color)}._tadashi_pesquisa__trigger{align-items:var(--tadashi_pesquisa__trigger_align_items);background-color:var(--tadashi_pesquisa__trigger_background_color);background-image:var(--tadashi_pesquisa__trigger_background_image);background-repeat:no-repeat;background-position:center;border:var(--tadashi_pesquisa__trigger_border);border-radius:var(--tadashi_pesquisa__trigger_border_radius);box-sizing:border-box;color:var(--tadashi_pesquisa__trigger_color);cursor:var(--tadashi_pesquisa__trigger_cursor);font-size:var(--tadashi_pesquisa__trigger_font_size);font-weight:var(--tadashi_pesquisa__trigger_font_weight);height:var(--tadashi_pesquisa__trigger_height);outline:var(--tadashi_pesquisa__trigger_outline);overflow:hidden;padding:var(--tadashi_pesquisa__trigger_padding);position:relative;transition:filter var(--tadashi_pesquisa__trigger_transition_duration);width:var(--tadashi_pesquisa__trigger_width);will-change:filter;display:inline-grid;grid-auto-flow:column;grid-template-columns:auto;grid-gap:var(--tadashi_pesquisa__trigger_grid_gap)}._tadashi_pesquisa__trigger___shadow{box-shadow:var(--tadashi_pesquisa__trigger_box_shadow)}._tadashi_pesquisa__trigger___loading{background-image:var(--tadashi_pesquisa__trigger___loading_background_image)}._tadashi_pesquisa__trigger:disabled{cursor:not-allowed;opacity:var(--tadashi_pesquisa__trigger_opacity)}._tadashi_pesquisa__trigger:not(:disabled):active{filter:brightness(var(--tadashi_pesquisa__trigger_filter_brightness))}</style>`;
+		this.shadowRoot.innerHTML = `<style>:host{--tadashi_pesquisa_grid_gap:0.5em;--tadashi_pesquisa__trigger_align_items:center;--tadashi_pesquisa__trigger_background_color:hsl(210deg 50% 50%);--tadashi_pesquisa__trigger_background_image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 512 512" width="16" height="16"><path fill="hsl(0deg 0% 100%)" d="M497.914 497.913c-18.783 18.782-49.225 18.782-68.008 0l-84.863-84.863c-34.888 22.382-76.13 35.717-120.659 35.717-123.915 0-224.384-100.454-224.384-224.384s100.469-224.383 224.384-224.383c123.931 0 224.384 100.452 224.384 224.383 0 44.514-13.352 85.771-35.718 120.676l84.864 84.863c18.781 18.782 18.781 49.209 0 67.991zM224.384 64.109c-88.511 0-160.274 71.747-160.274 160.273s71.763 160.274 160.274 160.274c88.526 0 160.274-71.748 160.274-160.274s-71.748-160.273-160.274-160.273z"></path></svg>');--tadashi_pesquisa__trigger_border:none;--tadashi_pesquisa__trigger_border_radius:0.15em;--tadashi_pesquisa__trigger_box_shadow:none;--tadashi_pesquisa__trigger_color:hsl(0deg 0% 100% / 0%);--tadashi_pesquisa__trigger_cursor:pointer;--tadashi_pesquisa__trigger_filter_brightness:1.3;--tadashi_pesquisa__trigger_font_size:1em;--tadashi_pesquisa__trigger_font_weight:300;--tadashi_pesquisa__trigger_grid_gap:5px;--tadashi_pesquisa__trigger_height:36px;--tadashi_pesquisa__trigger_outline:0;--tadashi_pesquisa__trigger_opacity:0.5;--tadashi_pesquisa__trigger_padding:0;--tadashi_pesquisa__trigger_transition_duration:0.5s;--tadashi_pesquisa__trigger_width:36px;--tadashi_pesquisa__trigger___loading_background_image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 100 100" width="40" height="40"><path fill="hsl(0deg 0% 100%)" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"><animateTransform attributeName="transform" attributeType="XML" type="rotate" dur="0.5s" from="0 50 50" to="360 50 50" repeatCount="indefinite" /></path></svg>');--tadashi_pesquisa__items_grid_gap:0.3em;--tadashi_pesquisa__items_top:calc(100% + 3px);--tadashi_pesquisa__items_background_color:hsl(225deg 5% 17%);--tadashi_pesquisa__items_color:hsl(0deg 0% 100%);--tadashi_pesquisa__items_border_radius:3px;--tadashi_pesquisa__item_padding:0.7em;--tadashi_pesquisa__item_border_radius:3px;--tadashi_pesquisa__item___hover_background_color:hsl(225deg 3% 30%);--tadashi_pesquisa__item___active_background_color:hsl(225deg 3% 30%)}._tadashi_pesquisa{position:relative;display:grid;align-items:center;grid-gap:var(--tadashi_pesquisa_grid_gap);grid-template-columns:1fr auto}._tadashi_pesquisa__target{position:relative}._tadashi_pesquisa__items{display:grid;grid-gap:var(--tadashi_pesquisa__items_grid_gap);grid-template-columns:1fr;width:100%;position:absolute;top:var(--tadashi_pesquisa__items_top);right:auto;bottom:auto;left:auto;background-color:var(--tadashi_pesquisa__items_background_color);color:var(--tadashi_pesquisa__items_color);border-radius:var(--tadashi_pesquisa__items_border_radius)}._tadashi_pesquisa__item{cursor:pointer;padding:var(--tadashi_pesquisa__item_padding);border-radius:var(--tadashi_pesquisa__item_border_radius)}._tadashi_pesquisa__item:hover{background-color:var(--tadashi_pesquisa__item___hover_background_color)}._tadashi_pesquisa__item:active{background-color:var(--tadashi_pesquisa__item___active_background_color)}._tadashi_pesquisa__trigger{align-items:var(--tadashi_pesquisa__trigger_align_items);background-color:var(--tadashi_pesquisa__trigger_background_color);background-image:var(--tadashi_pesquisa__trigger_background_image);background-repeat:no-repeat;background-position:center;border:var(--tadashi_pesquisa__trigger_border);border-radius:var(--tadashi_pesquisa__trigger_border_radius);box-shadow:var(--tadashi_pesquisa__trigger_box_shadow);box-sizing:border-box;color:var(--tadashi_pesquisa__trigger_color);cursor:var(--tadashi_pesquisa__trigger_cursor);font-size:var(--tadashi_pesquisa__trigger_font_size);font-weight:var(--tadashi_pesquisa__trigger_font_weight);height:var(--tadashi_pesquisa__trigger_height);outline:var(--tadashi_pesquisa__trigger_outline);overflow:hidden;padding:var(--tadashi_pesquisa__trigger_padding);position:relative;transition:filter var(--tadashi_pesquisa__trigger_transition_duration);width:var(--tadashi_pesquisa__trigger_width);will-change:filter;display:inline-grid;grid-auto-flow:column;grid-template-columns:auto;grid-gap:var(--tadashi_pesquisa__trigger_grid_gap)}._tadashi_pesquisa__trigger___loading{background-image:var(--tadashi_pesquisa__trigger___loading_background_image)}._tadashi_pesquisa__trigger:disabled{cursor:not-allowed;opacity:var(--tadashi_pesquisa__trigger_opacity)}._tadashi_pesquisa__trigger:not(:disabled):active{filter:brightness(var(--tadashi_pesquisa__trigger_filter_brightness))}</style>`;
 
 		init(
 			this,
@@ -3308,28 +3032,20 @@ class Pesquisa extends SvelteElement {
 			create_fragment,
 			safe_not_equal,
 			{
-				endpoint: 10,
-				auth: 11,
-				storage: 12,
-				query: 13,
-				match: 14,
+				endpoint: 9,
+				auth: 10,
+				storage: 11,
+				query: 12,
+				match: 13,
 				key: 0,
-				parse: 15,
-				shadow: 1,
-				verify: 16
+				parse: 14,
+				show: 15
 			}
 		);
 
-		const { ctx } = this.$$;
-		const props = this.attributes;
-
-		if (/*endpoint*/ ctx[10] === undefined && !("endpoint" in props)) {
-			console.warn("<tadashi-pesquisa> was created without expected prop 'endpoint'");
-		}
-
 		if (options) {
 			if (options.target) {
-				insert_dev(options.target, this, options.anchor);
+				insert(options.target, this, options.anchor);
 			}
 
 			if (options.props) {
@@ -3340,21 +3056,11 @@ class Pesquisa extends SvelteElement {
 	}
 
 	static get observedAttributes() {
-		return [
-			"endpoint",
-			"auth",
-			"storage",
-			"query",
-			"match",
-			"key",
-			"parse",
-			"shadow",
-			"verify"
-		];
+		return ["endpoint", "auth", "storage", "query", "match", "key", "parse", "show"];
 	}
 
 	get endpoint() {
-		return this.$$.ctx[10];
+		return this.$$.ctx[9];
 	}
 
 	set endpoint(endpoint) {
@@ -3363,7 +3069,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get auth() {
-		return this.$$.ctx[11];
+		return this.$$.ctx[10];
 	}
 
 	set auth(auth) {
@@ -3372,7 +3078,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get storage() {
-		return this.$$.ctx[12];
+		return this.$$.ctx[11];
 	}
 
 	set storage(storage) {
@@ -3381,7 +3087,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get query() {
-		return this.$$.ctx[13];
+		return this.$$.ctx[12];
 	}
 
 	set query(query) {
@@ -3390,7 +3096,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get match() {
-		return this.$$.ctx[14];
+		return this.$$.ctx[13];
 	}
 
 	set match(match) {
@@ -3408,7 +3114,7 @@ class Pesquisa extends SvelteElement {
 	}
 
 	get parse() {
-		return this.$$.ctx[15];
+		return this.$$.ctx[14];
 	}
 
 	set parse(parse) {
@@ -3416,21 +3122,12 @@ class Pesquisa extends SvelteElement {
 		flush();
 	}
 
-	get shadow() {
-		return this.$$.ctx[1];
+	get show() {
+		return this.$$.ctx[15];
 	}
 
-	set shadow(shadow) {
-		this.$set({ shadow });
-		flush();
-	}
-
-	get verify() {
-		return this.$$.ctx[16];
-	}
-
-	set verify(verify) {
-		this.$set({ verify });
+	set show(show) {
+		this.$set({ show });
 		flush();
 	}
 }

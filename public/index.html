@@ -25,7 +25,7 @@
 		<form action="#xxx">
 			cep
 			<tadashi-pesquisa
-				verify="true"
+				show="false"
 				endpoint="https://service.teleport.com.br/cep/v1/gql"
 				query='{consulta(cep: "${value}") {cidade, end}}'
 			>

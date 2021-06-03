@@ -1,19 +1,20 @@
 {
   "name": "@tadashi/svelte-pesquisa",
-  "version": "0.3.0",
-  "description": "Svelte component",
-  "keywords": [
-    "svelte",
-    "button",
-    "tooltip"
-  ],
-  "author": "Thiago Lagden",
-  "license": "MIT",
-  "homepage": "https://github.com/lagden/svelte-pesquisa#readme",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/lagden/svelte-pesquisa.git"
   },
+  "description": "Svelte components",
+  "keywords": [
+    "svelte",
+    "elements",
+    "search",
+    "component"
+  ],
+  "author": "Thiago Lagden",
+  "license": "MIT",
+  "homepage": "https://github.com/lagden/svelte-pesquisa#readme",
   "bugs": {
     "url": "https://github.com/lagden/svelte-pesquisa/issues"
   },
@@ -21,7 +22,7 @@
     "node": ">=14.16"
   },
   "type": "module",
-  "svelte": "src/components/Pesquisa.svelte",
+  "svelte": "src/Pesquisa.svelte",
   "main": "dist/Pesquisa.js",
   "files": [
     "dist",
@@ -29,21 +30,56 @@
     "README.md"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "autobuild": "rollup -c -w",
-    "dev": "run-p start:dev autobuild",
-    "start": "sirv public --single",
-    "start:dev": "sirv public --single --dev"
+    "eslint": "eslint --config .eslintrc.cjs --ext .js --ignore-path .gitignore .",
+    "rm": "rm -rf dist",
+    "rollup": "rollup -c",
+    "rollupw": "npm run rollup -- -w",
+    "build": "run-s test rm rollup",
+    "prepublishOnly": "npm run build",
+    "pretest": "npm run eslint",
+    "test": "jest test --coverage --coverageReporters=lcov --coverageReporters=text",
+    "test:watch": "npm test -- --watch",
+    "server": "sirv public --single --host 0.0.0.0 --dev",
+    "start": "run-p server rollupw"
   },
   "devDependencies": {
+    "@babel/core": "7.14.3",
+    "@babel/eslint-parser": "7.14.4",
+    "@babel/plugin-syntax-top-level-await": "7.12.13",
+    "@babel/preset-env": "7.14.4",
     "@rollup/plugin-commonjs": "18.0.0",
     "@rollup/plugin-node-resolve": "11.2.1",
     "@tadashi/flatten-object": "2.0.0",
     "@tadashi/unflatten-object": "1.0.2",
+    "@testing-library/svelte": "3.0.3",
+    "babel-jest": "27.0.2",
+    "eslint": "7.27.0",
+    "eslint-config-xo": "0.36.0",
+    "eslint-plugin-html": "6.1.2",
+    "eslint-plugin-svelte3": "3.2.0",
+    "eslint-plugin-unicorn": "32.0.1",
+    "jest": "27.0.3",
+    "node-fetch": "2.6.1",
     "npm-run-all": "4.1.5",
-    "rollup": "2.46.0",
+    "rollup": "2.50.5",
     "rollup-plugin-svelte": "7.1.0",
     "sirv-cli": "1.0.11",
-    "svelte": "3.38.0"
+    "svelte": "3.38.2",
+    "svelte-jester": "1.7.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      "@babel/plugin-syntax-top-level-await"
+    ]
   }
 }
