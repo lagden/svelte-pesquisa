@@ -1,5 +1,5 @@
 function request(endpoint, opts) {
-	const {value, query, match, auth, storage} = opts
+	const {value, query, match, auth, storage, signal} = opts
 
 	// Prepare request
 	let body = {value}
@@ -33,6 +33,7 @@ function request(endpoint, opts) {
 		cache: 'default',
 		credentials: 'include',
 		redirect: 'follow',
+		signal,
 		headers,
 		body
 	})

@@ -24,6 +24,7 @@
 	let currentResponse
 	let isBusy = false
 	let items = []
+	let controller
 
 	$: _show = parseBooleans(show)
 
@@ -60,13 +61,24 @@
 			return
 		}
 
+		// Controller
+		if (controller) {
+			controller.abort()
+		}
+		controller = new AbortController()
+
 		try {
 			// Now is busy
 			isBusy = true
 
 			// Make the fetch
 			const response = await request(endpoint, {
-				value, query, match, auth, storage
+				value,
+				query,
+				match,
+				auth,
+				storage,
+				signal: controller.signal
 			})
 
 			// HttpError
@@ -103,6 +115,7 @@
 		} finally {
 			// Free
 			isBusy = false
+			controller = undefined
 		}
 	}
 
