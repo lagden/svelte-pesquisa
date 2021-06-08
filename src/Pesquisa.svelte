@@ -62,7 +62,7 @@
 		}
 
 		// Controller
-		if (controller) {
+		if (typeof controller?.abort === 'function') {
 			controller.abort()
 		}
 		controller = new AbortController()
