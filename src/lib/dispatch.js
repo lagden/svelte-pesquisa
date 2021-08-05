@@ -4,7 +4,7 @@ function dispatch(data, node, success, cb) {
 		new CustomEvent('response', {
 			detail: {...data},
 			bubbles: true,
-			composed: true
+			composed: true,
 		}) :
 		new ErrorEvent('error', {
 			error: data,
@@ -12,7 +12,7 @@ function dispatch(data, node, success, cb) {
 			lineno: 72,
 			filename: 'Pesquisa.svelte',
 			bubbles: true,
-			composed: true
+			composed: true,
 		})
 
 	// Dispatch event

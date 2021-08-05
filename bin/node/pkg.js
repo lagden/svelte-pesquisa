@@ -26,7 +26,7 @@ const packageJson = JSON.parse(packageBuf)
 
 const {
 	dependencies,
-	devDependencies
+	devDependencies,
 } = packageJson
 
 let cc = 0
@@ -61,7 +61,7 @@ function getLatestVersionPackage(data, prop) {
 try {
 	await Promise.all([
 		getLatestVersionPackage(dependencies, 'dependencies'),
-		getLatestVersionPackage(devDependencies, 'devDependencies')
+		getLatestVersionPackage(devDependencies, 'devDependencies'),
 	])
 
 	createWriteStream(packageFile)

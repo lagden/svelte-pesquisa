@@ -1,24 +1,25 @@
 function request(endpoint, opts) {
-	const {value, query, match, auth, storage, signal} = opts
+	let {value, query, match, auth, storage, signal, headers = {}} = opts
 
 	// Prepare request
 	let body = {value}
 	if (query) {
 		const _query = query.replace(match, value)
 		body = {
-			query: _query
+			query: _query,
 		}
 	}
 	body = JSON.stringify(body)
 
-	// Default header
-	const headers = {
-		'Content-Type': 'application/json'
-	}
-
+	// Headers
 	// Authorization via attributes
 	if (auth) {
 		headers.Authorization = auth
+	}
+
+	headers = {
+		'Content-Type': 'application/json',
+		...headers,
 	}
 
 	// Authorization via localStorage
@@ -35,7 +36,7 @@ function request(endpoint, opts) {
 		redirect: 'follow',
 		signal,
 		headers,
-		body
+		body,
 	})
 }
 

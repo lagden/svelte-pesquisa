@@ -1,6 +1,7 @@
 <svelte:options tag="tadashi-pesquisa" />
 
 <script>
+	import wasmInit, {generate} from '@xet/totp-wasm-web'
 	import flatten from '@tadashi/flatten-object'
 	import unflatten from '@tadashi/unflatten-object'
 	import {onMount} from 'svelte'
@@ -78,7 +79,10 @@
 				match,
 				auth,
 				storage,
-				signal: controller.signal
+				headers: {
+					'x-auth-otp': generate(),
+				},
+				signal: controller.signal,
 			})
 
 			// HttpError
@@ -134,7 +138,8 @@
 	}
 
 	// Get input element
-	onMount(() => {
+	onMount(async () => {
+		await wasmInit()
 		slot = wrapper.firstElementChild
 		element = getEl(slot)
 		if (element) {
