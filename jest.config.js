@@ -1,5 +1,3 @@
-// const esModules = ['@xet/totp-wasm-web'].join('|')
-
 export default {
 	extensionsToTreatAsEsm: ['.svelte'],
 	moduleFileExtensions: ['js', 'svelte'],
@@ -8,7 +6,6 @@ export default {
 		'^.+\\.svelte$': ['svelte-jester', {preprocess: false}],
 	},
 	testEnvironment: 'jsdom',
-	// testEnvironment: 'node',
 	setupFilesAfterEnv: ['@testing-library/jest-dom'],
 	moduleNameMapper: {
 		'@xet/totp-wasm-web': '<rootDir>/node_modules/@xet/totp-wasm-web/totp.js',
