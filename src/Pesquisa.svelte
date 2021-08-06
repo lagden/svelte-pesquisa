@@ -101,7 +101,15 @@
 
 			// Flat
 			if (parse) {
-				const flat = flatten(currentResponse)
+				console.warn('Flat', parse)
+				console.debug('Flat2', currentResponse)
+				let flat
+				try {
+					flat = flatten(currentResponse)
+				} catch (error) {
+					console.error(error)
+				}
+				console.debug('Flat3', flat)
 				const _data = flat?.[parse]
 				const preItems = (Array.isArray(_data) && _data.length > 0 && _data) ?? []
 				if (preItems.length > 1) {
@@ -241,6 +249,7 @@
 		background-color: var(--tadashi_pesquisa__items_background_color);
 		color: var(--tadashi_pesquisa__items_color);
 		border-radius: var(--tadashi_pesquisa__items_border_radius);
+		z-index: 1000;
 	}
 
 	._tadashi_pesquisa__item {

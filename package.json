@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/svelte-pesquisa",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/lagden/svelte-pesquisa.git"
@@ -50,7 +50,7 @@
     "@babel/preset-env": "7.15.0",
     "@rollup/plugin-commonjs": "20.0.0",
     "@rollup/plugin-node-resolve": "13.0.4",
-    "@tadashi/flatten-object": "2.0.0",
+    "@tadashi/flatten-object": "3.0.0",
     "@tadashi/unflatten-object": "1.0.2",
     "@testing-library/jest-dom": "5.14.1",
     "@testing-library/svelte": "3.0.3",

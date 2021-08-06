@@ -1655,10 +1655,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tadashi/flatten-object@npm:2.0.0":
-  version: 2.0.0
-  resolution: "@tadashi/flatten-object@npm:2.0.0"
-  checksum: 11d48ca58fc8ec9abfbf26db1533a86680e13ef5377155fcdbd011268135edf470d890dfb54a3514978e57014b5b813e02f6c8c50b644912acd7264dd68d6d71
+"@tadashi/flatten-object@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@tadashi/flatten-object@npm:3.0.0"
+  checksum: 9fa965b38fab26229fab4875477a9bcdc40426ba9bf8d4c10dc5f275b76401a46bc2fc0e62cc6027132ae7416b9ac09fadf67714cba8f90f900356ca3a4ac649
   languageName: node
   linkType: hard
 
@@ -1672,7 +1672,7 @@ __metadata:
     "@babel/preset-env": 7.15.0
     "@rollup/plugin-commonjs": 20.0.0
     "@rollup/plugin-node-resolve": 13.0.4
-    "@tadashi/flatten-object": 2.0.0
+    "@tadashi/flatten-object": 3.0.0
     "@tadashi/unflatten-object": 1.0.2
     "@testing-library/jest-dom": 5.14.1
     "@testing-library/svelte": 3.0.3
@@ -1888,9 +1888,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 16.4.12
-  resolution: "@types/node@npm:16.4.12"
-  checksum: 1489aeba890629ca2ed9b8f04fb77f185123810afd3d518cf87c2a18a43a43f7d954550ae3572f3dac7e634f7db67e259ceb7ca25cb584ba0bcc023b0bfca2c9
+  version: 16.4.13
+  resolution: "@types/node@npm:16.4.13"
+  checksum: 071e86a1d196cf72928a7109e99769dffed93db481032b9ca2f52e6f3ced432e2a179849c85e587e67409202e1ed37bffd0c7a31d38adf35a385d327dfe8bd72
   languageName: node
   linkType: hard
 
@@ -2941,9 +2941,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.3.793":
-  version: 1.3.796
-  resolution: "electron-to-chromium@npm:1.3.796"
-  checksum: cc22078472cf57e094be58424973a50721512aca9700a5f73b39493c1300754f062688d4ee736cf3d9bc04eca4f3c9c8c920153453b9b38a08ec42295ff2c2be
+  version: 1.3.798
+  resolution: "electron-to-chromium@npm:1.3.798"
+  checksum: 60804d86ae238b7965244ceb098288d628c64e3e969f10bdac6c3f8ac796656f27ff0ff55383beccef4de8589c6e6e1aa1253ac0fd1f4843033bd62d0291688d
   languageName: node
   linkType: hard
 
@@ -3657,9 +3657,9 @@ __metadata:
   linkType: hard
 
 "graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6":
-  version: 4.2.7
-  resolution: "graceful-fs@npm:4.2.7"
-  checksum: a481959b5111931a28cf7a5dd73d2ec8e9dc5d20ba6dee02ea3e4c09edac65d7d28e228df17d35c582edc447a3c0e5cfe4ac2187859d5837e369c42e0f395211
+  version: 4.2.8
+  resolution: "graceful-fs@npm:4.2.8"
+  checksum: 5d224c8969ad0581d551dfabdb06882706b31af2561bd5e2034b4097e67cc27d05232849b8643866585fd0a41c7af152950f8776f4dd5579e9853733f31461c6
   languageName: node
   linkType: hard
 
@@ -3688,6 +3688,15 @@ __metadata:
   version: 1.0.2
   resolution: "has-symbols@npm:1.0.2"
   checksum: 2309c426071731be792b5be43b3da6fb4ed7cbe8a9a6bcfca1862587709f01b33d575ce8f5c264c1eaad09fca2f9a8208c0a2be156232629daa2dd0c0740976b
+  languageName: node
+  linkType: hard
+
+"has-tostringtag@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "has-tostringtag@npm:1.0.0"
+  dependencies:
+    has-symbols: ^1.0.2
+  checksum: cc12eb28cb6ae22369ebaad3a8ab0799ed61270991be88f208d508076a1e99abe4198c965935ce85ea90b60c94ddda73693b0920b58e7ead048b4a391b502c1c
   languageName: node
   linkType: hard
 
@@ -3911,11 +3920,12 @@ __metadata:
   linkType: hard
 
 "is-boolean-object@npm:^1.1.0":
-  version: 1.1.1
-  resolution: "is-boolean-object@npm:1.1.1"
+  version: 1.1.2
+  resolution: "is-boolean-object@npm:1.1.2"
   dependencies:
     call-bind: ^1.0.2
-  checksum: 95b832242638b8495d012538716761122dfc4a930baf2aa676e0bc344fe39cda2364c739893a6d07d10863ced67cc95e11884732104d7904bd0d896033414d11
+    has-tostringtag: ^1.0.0
+  checksum: c03b23dbaacadc18940defb12c1c0e3aaece7553ef58b162a0f6bba0c2a7e1551b59f365b91e00d2dbac0522392d576ef322628cb1d036a0fe51eb466db67222
   languageName: node
   linkType: hard
 
@@ -3956,9 +3966,11 @@ __metadata:
   linkType: hard
 
 "is-date-object@npm:^1.0.1":
-  version: 1.0.4
-  resolution: "is-date-object@npm:1.0.4"
-  checksum: 20ce7b73fda926b4dfad2457e0d6fa04bb0a4cf555456d68918e334cbf80ac30523155adac420be0c8a4bc126fafe0874c4cfc0ffe0d97bac6333a8f02de1b94
+  version: 1.0.5
+  resolution: "is-date-object@npm:1.0.5"
+  dependencies:
+    has-tostringtag: ^1.0.0
+  checksum: baa9077cdf15eb7b58c79398604ca57379b2fc4cf9aa7a9b9e295278648f628c9b201400c01c5e0f7afae56507d741185730307cbe7cad3b9f90a77e5ee342fc
   languageName: node
   linkType: hard
 
@@ -4084,9 +4096,11 @@ __metadata:
   linkType: hard
 
 "is-string@npm:^1.0.5, is-string@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "is-string@npm:1.0.6"
-  checksum: 9990bf0abf2eea6255f0218f82ba1bcfc8d27923af99bcbb2c77ec5eae4ddbe6c23f1f916d6f19f9e9aa57ec7cd8a91a3e026a34e207c51af35fced1ad50bba8
+  version: 1.0.7
+  resolution: "is-string@npm:1.0.7"
+  dependencies:
+    has-tostringtag: ^1.0.0
+  checksum: 323b3d04622f78d45077cf89aab783b2f49d24dc641aa89b5ad1a72114cfeff2585efc8c12ef42466dff32bde93d839ad321b26884cf75e5a7892a938b089989
   languageName: node
   linkType: hard
 
