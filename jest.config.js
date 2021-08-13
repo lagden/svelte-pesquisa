@@ -6,7 +6,6 @@ export default {
 		'^.+\\.svelte$': ['svelte-jester', {preprocess: false}],
 	},
 	testEnvironment: 'jsdom',
-	setupFilesAfterEnv: ['@testing-library/jest-dom'],
 	moduleNameMapper: {
 		'@xet/totp-wasm-web': '<rootDir>/node_modules/@xet/totp-wasm-web/totp.js',
 	},

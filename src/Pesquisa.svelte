@@ -101,15 +101,7 @@
 
 			// Flat
 			if (parse) {
-				console.warn('Flat', parse)
-				console.debug('Flat2', currentResponse)
-				let flat
-				try {
-					flat = flatten(currentResponse)
-				} catch (error) {
-					console.error(error)
-				}
-				console.debug('Flat3', flat)
+				const flat = flatten(currentResponse)
 				const _data = flat?.[parse]
 				const preItems = (Array.isArray(_data) && _data.length > 0 && _data) ?? []
 				if (preItems.length > 1) {
