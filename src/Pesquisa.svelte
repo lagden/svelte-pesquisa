@@ -1,4 +1,4 @@
-<svelte:options tag="tadashi-pesquisa" />
+<svelte:options tag="tadashi-pesquisa" accessors={true} />
 
 <script>
 	import wasmInit, {generate} from '@xet/totp-wasm-web'

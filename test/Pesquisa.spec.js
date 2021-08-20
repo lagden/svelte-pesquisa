@@ -1,4 +1,4 @@
-/* global describe, afterEach, test, expect */
+/* global describe, afterEach, test, expect, jest */
 /* eslint no-unused-vars: 0 */
 
 import {
@@ -8,6 +8,8 @@ import {
 } from '@testing-library/svelte'
 import Pesquisa from '../src/Pesquisa.svelte'
 import Slot from './Slot.svelte'
+
+import '@testing-library/jest-dom'
 
 describe('Pesquisa', () => {
 	afterEach(cleanup)
@@ -27,11 +29,9 @@ describe('Pesquisa', () => {
 	})
 
 	test('trigger should work', async () => {
-		const {component, getByTitle} = render(Slot)
+		const {getByTitle} = render(Slot)
 		const button = getByTitle('btn')
 		const input = getByTitle('q')
-
-		// input.value = '09750220'
 
 		await fireEvent.click(button)
 

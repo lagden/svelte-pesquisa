@@ -2,7 +2,7 @@
 
 'use strict'
 
-const ignoreWarnings = new Set(['a11y-no-onchange', 'a11y-label-has-associated-control'])
+const ignoreWarnings = new Set(['a11y-no-onchange', 'a11y-label-has-associated-control', 'missing-declaration'])
 
 module.exports = {
 	env: {
@@ -60,6 +60,7 @@ module.exports = {
 		'unicorn/no-useless-undefined': 0,
 		'unicorn/no-zero-fractions': 0,
 		'unicorn/prefer-query-selector': 0,
+		'unicorn/no-null': 0,
 		'unicorn/import-style': [
 			'error',
 			{

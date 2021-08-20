@@ -1,3 +1,4 @@
+<svelte:options tag={null}/>
 <script>
 	import Pesquisa from '../src/Pesquisa.svelte'
 
@@ -9,5 +10,5 @@
 	title="btn"
 	{query}
 >
-	<input type="text" title="q" name="q" class="pesquisa">
+	<input type="text" title="q" name="q" value="09750220" class="pesquisa">
 </Pesquisa>

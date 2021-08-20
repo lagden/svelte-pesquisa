@@ -28,7 +28,7 @@ function request(endpoint, opts) {
 	}
 
 	// Make the fetch
-	return fetch(endpoint, {
+	return globalThis.fetch(endpoint, {
 		method: 'POST',
 		mode: 'cors',
 		cache: 'default',
