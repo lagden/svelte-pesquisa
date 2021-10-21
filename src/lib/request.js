@@ -1,42 +1,62 @@
+import {generate} from '@xet/totp-wasm-web'
+import {template, parseBooleans, fullURL} from './helper.js'
+
 function request(endpoint, opts) {
-	let {value, query, match, auth, storage, signal, headers = {}} = opts
+	const {
+		value,
+		query,
+		auth,
+		storage,
+		otp,
+		prop,
+		signal,
+		method = 'post',
+		headers = {},
+	} = opts
+
+	const fetchOpts = {
+		method,
+		// mode: 'cors',
+		// cache: 'default',
+		// credentials: 'include',
+		// redirect: 'follow',
+	}
 
 	// Prepare request
-	let body = {value}
-	if (query) {
-		const _query = query.replace(match, value)
-		body = {
-			query: _query,
+	const data = typeof value === 'object' ? {...value} : {[prop]: value}
+
+	if (method.toLowerCase() === 'get') {
+		endpoint = fullURL(endpoint, data)
+	} else {
+		headers['Content-Type'] = 'application/json'
+
+		let body = data
+		if (query) {
+			body = {
+				query: template(query, data),
+			}
 		}
+		fetchOpts.body = JSON.stringify(body)
 	}
-	body = JSON.stringify(body)
 
 	// Headers
-	// Authorization via attributes
 	if (auth) {
+		// Authorization via attributes
 		headers.Authorization = auth
-	}
-
-	headers = {
-		'Content-Type': 'application/json',
-		...headers,
-	}
-
-	// Authorization via localStorage
-	if (storage) {
+	} else if (storage) {
+		// Authorization via localStorage
 		headers.Authorization = `Bearer ${globalThis.localStorage.getItem(storage)}`
+	}
+
+	if (parseBooleans(otp) === true) {
+		headers['x-auth-otp'] = generate()
 	}
 
 	// Make the fetch
 	return globalThis.fetch(endpoint, {
-		method: 'POST',
-		mode: 'cors',
-		cache: 'default',
-		credentials: 'include',
-		redirect: 'follow',
+		...fetchOpts,
 		signal,
 		headers,
-		body,
 	})
 }
 

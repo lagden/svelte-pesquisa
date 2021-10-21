@@ -19,12 +19,23 @@ $ npm i -S @tadashi/svelte-pesquisa
 
 ## Usage
 
+Example: https://codepen.io/lagden/pen/oNezyyv?editors=1010
+
 ```html
 <script type="module" src="https://unpkg.com/@tadashi/svelte-pesquisa@{VERSION}/dist/Pesquisa.js"></script>
 
-<tadashi-pesquisa target="#q" endpoint="https://your.service.com.br/endpoint">
-  <input type="text" id="q" name="q">
+<tadashi-pesquisa
+  endpoint="https://ws.apicep.com/cep.json"
+  prop="code"
+  method="get"
+>
+  <input type="text" name="q">
 </tadashi-pesquisa>
+
+<script>
+  const pesquisa = document.querySelector('tadashi-pesquisa')
+  pesquisa.addEventListener('response', console.log)
+</script>
 ```
 
 

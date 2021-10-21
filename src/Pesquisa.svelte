@@ -1,7 +1,7 @@
 <svelte:options tag="tadashi-pesquisa" accessors={true} />
 
 <script>
-	import wasmInit, {generate} from '@xet/totp-wasm-web'
+	import wasmInit from '@xet/totp-wasm-web'
 	import flatten from '@tadashi/flatten-object'
 	import unflatten from '@tadashi/unflatten-object'
 	import {onMount} from 'svelte'
@@ -13,10 +13,12 @@
 	export let auth = undefined
 	export let storage = undefined
 	export let query = undefined
-	export let match = '${value}'
 	export let key = 'id'
+	export let prop = 'value'
+	export let method = 'post'
 	export let parse = false
 	export let show = true
+	export let otp = false
 
 	let element
 	let wrapper
@@ -76,12 +78,11 @@
 			const response = await request(endpoint, {
 				value,
 				query,
-				match,
 				auth,
 				storage,
-				headers: {
-					'x-auth-otp': generate(),
-				},
+				otp,
+				prop,
+				method,
 				signal: controller.signal,
 			})
 
@@ -209,6 +210,7 @@
 		--tadashi_pesquisa__items_background_color: hsl(225deg 5% 17%);
 		--tadashi_pesquisa__items_color: hsl(0deg 0% 100%);
 		--tadashi_pesquisa__items_border_radius: 3px;
+		--tadashi_pesquisa__items_min_width: max-content;
 
 		--tadashi_pesquisa__item_padding: 0.7em;
 		--tadashi_pesquisa__item_border_radius: 3px;
@@ -233,6 +235,7 @@
 		grid-gap: var(--tadashi_pesquisa__items_grid_gap);
 		grid-template-columns: 1fr;
 		width: 100%;
+		min-width: var(--tadashi_pesquisa__items_min_width);
 		position: absolute;
 		top: var(--tadashi_pesquisa__items_top);
 		right: auto;

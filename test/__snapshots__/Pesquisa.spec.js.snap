@@ -4,16 +4,16 @@ exports[`Pesquisa should match snapshot default 1`] = `
 <body>
   <div>
     <div
-      class="_tadashi_pesquisa svelte-1n6u48v"
+      class="_tadashi_pesquisa svelte-1ajyzo4"
     >
       <div
-        class="_tadashi_pesquisa__target svelte-1n6u48v"
+        class="_tadashi_pesquisa__target svelte-1ajyzo4"
       >
          
       </div>
        
       <button
-        class="_tadashi_pesquisa__trigger svelte-1n6u48v"
+        class="_tadashi_pesquisa__trigger svelte-1ajyzo4"
         type="button"
       >
         ✓
@@ -27,13 +27,12 @@ exports[`Pesquisa should match snapshot with slot 1`] = `
 <body>
   <div>
     <div
-      class="_tadashi_pesquisa svelte-1n6u48v"
+      class="_tadashi_pesquisa svelte-1ajyzo4"
     >
       <div
-        class="_tadashi_pesquisa__target svelte-1n6u48v"
+        class="_tadashi_pesquisa__target svelte-1ajyzo4"
       >
         <input
-          class="pesquisa"
           name="q"
           title="q"
           type="text"
@@ -42,7 +41,7 @@ exports[`Pesquisa should match snapshot with slot 1`] = `
       </div>
        
       <button
-        class="_tadashi_pesquisa__trigger svelte-1n6u48v"
+        class="_tadashi_pesquisa__trigger svelte-1ajyzo4"
         title="btn"
         type="button"
       >
@@ -55,7 +54,7 @@ exports[`Pesquisa should match snapshot with slot 1`] = `
 
 exports[`Pesquisa trigger should work 1`] = `
 <button
-  class="_tadashi_pesquisa__trigger svelte-1n6u48v"
+  class="_tadashi_pesquisa__trigger svelte-1ajyzo4"
   title="btn"
   type="button"
 >
@@ -65,7 +64,6 @@ exports[`Pesquisa trigger should work 1`] = `
 
 exports[`Pesquisa trigger should work 2`] = `
 <input
-  class="pesquisa"
   name="q"
   title="q"
   type="text"

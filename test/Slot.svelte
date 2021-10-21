@@ -2,7 +2,7 @@
 <script>
 	import Pesquisa from '../src/Pesquisa.svelte'
 
-	const query = '{consulta(cep: "${value}") {cidade, end}}'
+	const query = '{consulta(cep: "${this.value}") {cidade, end}}'
 </script>
 
 <Pesquisa
@@ -10,5 +10,5 @@
 	title="btn"
 	{query}
 >
-	<input type="text" title="q" name="q" value="09750220" class="pesquisa">
+	<input type="text" title="q" name="q" value="04080000">
 </Pesquisa>
