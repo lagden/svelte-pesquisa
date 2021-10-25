@@ -1191,8 +1191,8 @@ __metadata:
   linkType: hard
 
 "@babel/preset-modules@npm:^0.1.4":
-  version: 0.1.4
-  resolution: "@babel/preset-modules@npm:0.1.4"
+  version: 0.1.5
+  resolution: "@babel/preset-modules@npm:0.1.5"
   dependencies:
     "@babel/helper-plugin-utils": ^7.0.0
     "@babel/plugin-proposal-unicode-property-regex": ^7.4.4
@@ -1201,7 +1201,7 @@ __metadata:
     esutils: ^2.0.2
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 7c6500be06be9a341e377eb63292a4a22d0da2b4fb8c68714aff703ddb341cbd58e37d4119d64fc3e602f73801103af471fca2c60b4c1e48e08eea3e6b1afc93
+  checksum: 8430e0e9e9d520b53e22e8c4c6a5a080a12b63af6eabe559c2310b187bd62ae113f3da82ba33e9d1d0f3230930ca702843aae9dd226dec51f7d7114dc1f51c10
   languageName: node
   linkType: hard
 
@@ -1684,16 +1684,16 @@ __metadata:
     "@tadashi/unflatten-object": 1.0.2
     "@testing-library/jest-dom": 5.14.1
     "@testing-library/svelte": 3.0.3
-    "@xet/totp-wasm-web": 0.1.1
+    "@xet/totp-wasm-web": 0.1.2
     babel-jest: 27.3.1
-    eslint: 8.0.1
+    eslint: 8.1.0
     eslint-config-xo: 0.39.0
     eslint-plugin-html: 6.2.0
     eslint-plugin-svelte3: 3.2.1
     eslint-plugin-unicorn: 37.0.1
     jest: 27.3.1
     npm-run-all: 4.1.5
-    rollup: 2.58.0
+    rollup: 2.58.3
     rollup-plugin-copy: 3.4.0
     rollup-plugin-svelte: 7.1.0
     sirv-cli: 1.0.14
@@ -1895,9 +1895,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 16.11.1
-  resolution: "@types/node@npm:16.11.1"
-  checksum: 22cea470b89292810733b8b9fc1b6a1873bc3ed4d4cdf2f25e777dc607994bd7c12e64166d1a66dd5924734192b0a891b6aeb6813aa935f731345f4086234375
+  version: 16.11.5
+  resolution: "@types/node@npm:16.11.5"
+  checksum: 290382b32606f0edf4b0b4d3e50283fdf18591c48f0088c22f114196d7f032973720afaba9c11a5acf8411a97c40c94cb89efb5a49691b77ec47917d501916be
   languageName: node
   linkType: hard
 
@@ -1965,10 +1965,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xet/totp-wasm-web@npm:0.1.1":
-  version: 0.1.1
-  resolution: "@xet/totp-wasm-web@npm:0.1.1"
-  checksum: f5a6ef35d5756193596fffe874f31d7833a04b4e4d7f44d235cb14273bb637660d74325346f392d4555c649b963326a27c3def56a449ba4871a9a49c0b3fc16b
+"@xet/totp-wasm-web@npm:0.1.2":
+  version: 0.1.2
+  resolution: "@xet/totp-wasm-web@npm:0.1.2"
+  checksum: 8ba7ad35b1bc9d7a7986738a77b57b1ef0272cf473c3f119029a6da3c652e102bc8e77a0af7906c7e91147eeb1baf34554104d530bb52c7c36701dd7d5bc139f
   languageName: node
   linkType: hard
 
@@ -2358,18 +2358,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.16.6, browserslist@npm:^4.17.3":
-  version: 4.17.4
-  resolution: "browserslist@npm:4.17.4"
+"browserslist@npm:^4.16.6, browserslist@npm:^4.17.5":
+  version: 4.17.5
+  resolution: "browserslist@npm:4.17.5"
   dependencies:
-    caniuse-lite: ^1.0.30001265
-    electron-to-chromium: ^1.3.867
+    caniuse-lite: ^1.0.30001271
+    electron-to-chromium: ^1.3.878
     escalade: ^3.1.1
-    node-releases: ^2.0.0
+    node-releases: ^2.0.1
     picocolors: ^1.0.0
   bin:
     browserslist: cli.js
-  checksum: 830a25a70f33804ac4f5f884da3747028b9efe5190bf69ffe447d8651c8d09d91cfa1e534f2b71f06fbe13a3ce871cfcb416de498c726c91cad11818e80470e7
+  checksum: 0a1d762305c39dd317bb21e3159f44250bb1029a497f9a901ef5066f909263372eaacda58fd39174121c2741c0c32a7e6ace04df9172abe22c2fb69eba139a01
   languageName: node
   linkType: hard
 
@@ -2453,10 +2453,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001265":
-  version: 1.0.30001270
-  resolution: "caniuse-lite@npm:1.0.30001270"
-  checksum: bee685ddf96f707f124c417f9bf7d84e4e57d5cfeaa3d0ccb79c50a09d7c74786fbe7ec89d733ccc1d0fddd593e9eb3fded5ae12b1ad5a3998a32eecbe0b191c
+"caniuse-lite@npm:^1.0.30001271":
+  version: 1.0.30001271
+  resolution: "caniuse-lite@npm:1.0.30001271"
+  checksum: 0271e234e17c588fa203a34523f90c5a21ab62f41a2c3acabe96f0251593ac92f192cadd7a3dcbcf49bb28de4f57ca274d775c75700c3f38e9c42028d3becb0f
   languageName: node
   linkType: hard
 
@@ -2660,19 +2660,19 @@ __metadata:
   linkType: hard
 
 "core-js-compat@npm:^3.16.0, core-js-compat@npm:^3.16.2":
-  version: 3.18.3
-  resolution: "core-js-compat@npm:3.18.3"
+  version: 3.19.0
+  resolution: "core-js-compat@npm:3.19.0"
   dependencies:
-    browserslist: ^4.17.3
+    browserslist: ^4.17.5
     semver: 7.0.0
-  checksum: 320fab41e881d56e6d3582781fc365769dd3b9d3deae35407fb28f96076e657290c4444d453bfa0dfb98d45c29f3082f15fc68c5f73d16037bd47dc9198b2499
+  checksum: 78a497590bcb85a6836a423640a84a1d4968168a3deb483c5cd7b47bf68862d26167ee9d2ce7887881d11ab6211b4912feb9a84594eba5c79db3068d910c5408
   languageName: node
   linkType: hard
 
 "core-js-pure@npm:^3.16.0":
-  version: 3.18.3
-  resolution: "core-js-pure@npm:3.18.3"
-  checksum: 57ad0e318be08ea09081a854027aa0bac9f13b0eaf783a01ecf6e04def72f2abdb8beac76529ce3aed3d5f105f5f42f0d9c80c3b95dcdc7d175f888ecbb507c6
+  version: 3.19.0
+  resolution: "core-js-pure@npm:3.19.0"
+  checksum: b1ff8e30791b4d32777200189fc7e0b0c5aa57ffb36280c4ee4aed83bee551b21a5027e62d12ca9bbdfa6522b795642d9ba0513b983dfc710c657551c58aefaa
   languageName: node
   linkType: hard
 
@@ -2922,10 +2922,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.3.867":
-  version: 1.3.875
-  resolution: "electron-to-chromium@npm:1.3.875"
-  checksum: 992d7a397533a70bf6ae0b853a86be867566baabc358b94aa9d06ccc3c01686393b42f48efc287105e43624d54192fcc2e8cbc57e9362bd7efb0f0c54eff319a
+"electron-to-chromium@npm:^1.3.878":
+  version: 1.3.879
+  resolution: "electron-to-chromium@npm:1.3.879"
+  checksum: 9f7bfa6c7b28e02f40aafe30865689e6859b8d667deeea8e5e0877ae77cd2f5c24a10177b01e93daa621135ed96e3ea1052dcf2f96bef7b896ea110c3b87c372
   languageName: node
   linkType: hard
 
@@ -3199,9 +3199,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:8.0.1":
-  version: 8.0.1
-  resolution: "eslint@npm:8.0.1"
+"eslint@npm:8.1.0":
+  version: 8.1.0
+  resolution: "eslint@npm:8.1.0"
   dependencies:
     "@eslint/eslintrc": ^1.0.3
     "@humanwhocodes/config-array": ^0.6.0
@@ -3243,7 +3243,7 @@ __metadata:
     v8-compile-cache: ^2.0.3
   bin:
     eslint: bin/eslint.js
-  checksum: 072dde3e188c1274fa92eaf72d233d77b9c6e87ed859dce071b49c243546959ff7aefdb4759abf09841b650ef9d9f013abaae720b0bd64e0e07700ccefaf1208
+  checksum: e0b0c4bddd8673f376730b5bc72876fd0298e0ed9e52fa0707e48854ab0cea6a6a1945dbe2a059db1c867aafba7979b9d770060696e3f0ffc9d4b635ca4bce49
   languageName: node
   linkType: hard
 
@@ -3294,9 +3294,9 @@ __metadata:
   linkType: hard
 
 "estraverse@npm:^5.1.0, estraverse@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "estraverse@npm:5.2.0"
-  checksum: ec11b70d946bf5d7f76f91db38ef6f08109ac1b36cda293a26e678e58df4719f57f67b9ec87042afdd1f0267cee91865be3aa48d2161765a93defab5431be7b8
+  version: 5.3.0
+  resolution: "estraverse@npm:5.3.0"
+  checksum: 072780882dc8416ad144f8fe199628d2b3e7bbc9989d9ed43795d2c90309a2047e6bc5979d7e2322a341163d22cfad9e21f4110597fe487519697389497e4e2b
   languageName: node
   linkType: hard
 
@@ -4996,12 +4996,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"makeerror@npm:1.0.x":
-  version: 1.0.11
-  resolution: "makeerror@npm:1.0.11"
+"makeerror@npm:1.0.12":
+  version: 1.0.12
+  resolution: "makeerror@npm:1.0.12"
   dependencies:
-    tmpl: 1.0.x
-  checksum: 9a62ec2d9648c5329fdc4bc7d779a7305f32b1e55422a4f14244bc890bb43287fe013eb8d965e92a0cf4c443f3e59265b1fc3125eaedb0c2361e28b1a8de565d
+    tmpl: 1.0.5
+  checksum: b38a025a12c8146d6eeea5a7f2bf27d51d8ad6064da8ca9405fcf7bf9b54acd43e3b30ddd7abb9b1bfa4ddb266019133313482570ddb207de568f71ecfcf6060
   languageName: node
   linkType: hard
 
@@ -5253,10 +5253,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-releases@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "node-releases@npm:2.0.0"
-  checksum: 4342ab76816ad2c82826a74a2334e51f1d328e3d0ce505547a68d32c38d05d84affa1b5918650f205b32d0b80ab3a4870d8951489552a2ba6060ef7fd521c8de
+"node-releases@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "node-releases@npm:2.0.1"
+  checksum: b20dd8d4bced11f75060f0387e05e76b9dc4a0451f7bb3516eade6f50499ea7768ba95d8a60d520c193402df1e58cb3fe301510cc1c1ad68949c3d57b5149866
   languageName: node
   linkType: hard
 
@@ -5973,9 +5973,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:2.58.0":
-  version: 2.58.0
-  resolution: "rollup@npm:2.58.0"
+"rollup@npm:2.58.3":
+  version: 2.58.3
+  resolution: "rollup@npm:2.58.3"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -5983,7 +5983,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: a5e5642f2b1e239e3698eeee93b19d905e55e3012c63978cebc71e76c0a4eb2de5cff06a2a80d68bf87fe6869c57647cccc335daba280a5449a9214abdeca247
+  checksum: 20305ac3aea2a62be1728cfd3477419431bad2931532cc136da1904841fa03c318b231027b3a3da077baa0a874c20d72985bf74ed42dad103e88de610eb447a9
   languageName: node
   linkType: hard
 
@@ -6122,9 +6122,9 @@ __metadata:
   linkType: hard
 
 "shell-quote@npm:^1.6.1":
-  version: 1.7.2
-  resolution: "shell-quote@npm:1.7.2"
-  checksum: efad426fb25d8a54d06363f1f45774aa9e195f62f14fa696d542b44bfe418ab41206448b63af18d726c62e099e66d9a3f4f44858b9ea2ce4b794b41b802672d1
+  version: 1.7.3
+  resolution: "shell-quote@npm:1.7.3"
+  checksum: aca58e73a3a5d933d02e0bdddedc53ee14f7c2ec264f97ac915b9d4482d077a38e422aa664631d60a672cd3cdb4054eb2e6c0303f54882453dacb6483e482d34
   languageName: node
   linkType: hard
 
@@ -6568,7 +6568,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tmpl@npm:1.0.x":
+"tmpl@npm:1.0.5":
   version: 1.0.5
   resolution: "tmpl@npm:1.0.5"
   checksum: cd922d9b853c00fe414c5a774817be65b058d54a2d01ebb415840960406c669a0fc632f66df885e24cb022ec812739199ccbdb8d1164c3e513f85bfca5ab2873
@@ -6811,11 +6811,11 @@ __metadata:
   linkType: hard
 
 "walker@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "walker@npm:1.0.7"
+  version: 1.0.8
+  resolution: "walker@npm:1.0.8"
   dependencies:
-    makeerror: 1.0.x
-  checksum: 4038fcf92f6ab0288267ad05008aec9e089a759f1bd32e1ea45cc2eb498eb12095ec43cf8ca2bf23a465f4580a0d33b25b89f450ba521dd27083cbc695ee6bf5
+    makeerror: 1.0.12
+  checksum: ad7a257ea1e662e57ef2e018f97b3c02a7240ad5093c392186ce0bcf1f1a60bbadd520d073b9beb921ed99f64f065efb63dfc8eec689a80e569f93c1c5d5e16c
   languageName: node
   linkType: hard
 

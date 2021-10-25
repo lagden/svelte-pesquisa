@@ -19,6 +19,7 @@
 	export let parse = false
 	export let show = true
 	export let otp = false
+	export let fx = false
 
 	let element
 	let wrapper
@@ -140,7 +141,11 @@
 
 	// Get input element
 	onMount(async () => {
-		await wasmInit()
+		try {
+			await wasmInit()
+		} catch (error) {
+			console.error('wasmInit', error)
+		}
 		slot = wrapper.firstElementChild
 		element = getEl(slot)
 		if (element) {
@@ -170,8 +175,9 @@
 	{#if _show}
 		<button
 			type="button"
-			class="_tadashi_pesquisa__trigger"
+			class="_tadashi_pesquisa__trigger _tadashi_pesquisa__trigger___outline"
 			class:_tadashi_pesquisa__trigger___loading={isBusy}
+			class:_tadashi_pesquisa__trigger___default_fx={parseBooleans(fx)}
 			bind:this={node}
 			on:click={search}
 			{...prepareProps()}
@@ -192,16 +198,20 @@
 		--tadashi_pesquisa__trigger_box_shadow: none;
 		--tadashi_pesquisa__trigger_color: hsl(0deg 0% 100% / 0%);
 		--tadashi_pesquisa__trigger_cursor: pointer;
-		--tadashi_pesquisa__trigger_filter_brightness: 1.3;
+		--tadashi_pesquisa__trigger_filter: none;
 		--tadashi_pesquisa__trigger_font_size: 1em;
 		--tadashi_pesquisa__trigger_font_weight: 300;
 		--tadashi_pesquisa__trigger_grid_gap: 5px;
-		--tadashi_pesquisa__trigger_height: 36px;
-		--tadashi_pesquisa__trigger_outline: 0;
-		--tadashi_pesquisa__trigger_opacity: 0.5;
+		--tadashi_pesquisa__trigger_outline: hsl(300deg 27% 57%) auto thin;
+		--tadashi_pesquisa__trigger_opacity: 1;
 		--tadashi_pesquisa__trigger_padding: 0;
+		--tadashi_pesquisa__trigger_transform:  none;
+		--tadashi_pesquisa__trigger_transition_property: background-color, border-color, box-shadow, color, filter, transform;
 		--tadashi_pesquisa__trigger_transition_duration: 0.5s;
 		--tadashi_pesquisa__trigger_width: 36px;
+		--tadashi_pesquisa__trigger_height: 36px;
+
+		--tadashi_pesquisa__trigger___disabled_opacity: 0.5;
 
 		--tadashi_pesquisa__trigger___loading_background_image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 100 100" width="40" height="40"><path fill="hsl(0deg 0% 100%)" d="M73,50c0-12.7-10.3-23-23-23S27,37.3,27,50 M30.9,50c0-10.5,8.5-19.1,19.1-19.1S69.1,39.5,69.1,50"><animateTransform attributeName="transform" attributeType="XML" type="rotate" dur="0.5s" from="0 50 50" to="360 50 50" repeatCount="indefinite" /></path></svg>');
 
@@ -273,16 +283,21 @@
 		box-sizing: border-box;
 		color: var(--tadashi_pesquisa__trigger_color);
 		cursor: var(--tadashi_pesquisa__trigger_cursor);
+		filter: var(--tadashi_pesquisa__trigger_filter);
 		font-size: var(--tadashi_pesquisa__trigger_font_size);
 		font-weight: var(--tadashi_pesquisa__trigger_font_weight);
-		height: var(--tadashi_pesquisa__trigger_height);
-		outline: var(--tadashi_pesquisa__trigger_outline);
+		opacity: var(--tadashi_pesquisa__trigger_opacity);
+		/*outline: var(--tadashi_pesquisa__trigger_outline);*/
 		overflow: hidden;
 		padding: var(--tadashi_pesquisa__trigger_padding);
 		position: relative;
-		transition: filter var(--tadashi_pesquisa__trigger_transition_duration);
+		transform: var(--tadashi_pesquisa__trigger_transform);
+		user-select: none;
 		width: var(--tadashi_pesquisa__trigger_width);
-		will-change: filter;
+		height: var(--tadashi_pesquisa__trigger_height);
+
+		transition-duration: var(--tadashi_pesquisa__trigger_transition_duration);
+		transition-property: var(--tadashi_pesquisa__trigger_transition_property);
 
 		display: inline-grid;
 		grid-auto-flow: column;
@@ -296,10 +311,47 @@
 
 	._tadashi_pesquisa__trigger:disabled {
 		cursor: not-allowed;
-		opacity: var(--tadashi_pesquisa__trigger_opacity);
+		opacity: var(--tadashi_pesquisa__trigger___disabled_opacity, var(--tadashi_pesquisa__trigger_opacity));
+	}
+
+	._tadashi_pesquisa__trigger:not(:disabled):focus {
+		background-color: var(--tadashi_pesquisa__trigger___not_disabled___focus_background_color, var(--tadashi_pesquisa__trigger_background_color));
+		border: var(--tadashi_pesquisa__trigger___not_disabled___focus_border, var(--tadashi_pesquisa__trigger_border));
+		box-shadow: var(--tadashi_pesquisa__trigger___not_disabled___focus_box_shadow, var(--tadashi_pesquisa__trigger_box_shadow));
+		color: var(--tadashi_pesquisa__trigger___not_disabled___focus_color, var(--tadashi_pesquisa__trigger_color));
+		filter: var(--tadashi_pesquisa__trigger___not_disabled___focus_filter, var(--tadashi_pesquisa__trigger_filter));
+		transform: var(--tadashi_pesquisa__trigger___not_disabled___focus_transform, var(--tadashi_pesquisa__trigger_transform));
+	}
+
+	._tadashi_pesquisa__trigger:not(:disabled):hover {
+		background-color: var(--tadashi_pesquisa__trigger___not_disabled___hover_background_color, var(--tadashi_pesquisa__trigger_background_color));
+		border: var(--tadashi_pesquisa__trigger___not_disabled___hover_border, var(--tadashi_pesquisa__trigger_border));
+		box-shadow: var(--tadashi_pesquisa__trigger___not_disabled___hover_box_shadow, var(--tadashi_pesquisa__trigger_box_shadow));
+		color: var(--tadashi_pesquisa__trigger___not_disabled___hover_color, var(--tadashi_pesquisa__trigger_color));
+		filter: var(--tadashi_pesquisa__trigger___not_disabled___hover_filter, var(--tadashi_pesquisa__trigger_filter));
+		transform: var(--tadashi_pesquisa__trigger___not_disabled___hover_transform, var(--tadashi_pesquisa__trigger_transform));
 	}
 
 	._tadashi_pesquisa__trigger:not(:disabled):active {
-		filter: brightness(var(--tadashi_pesquisa__trigger_filter_brightness));
+		background-color: var(--tadashi_pesquisa__trigger___not_disabled___active_background_color, var(--tadashi_pesquisa__trigger_background_color));
+		border: var(--tadashi_pesquisa__trigger___not_disabled___active_border, var(--tadashi_pesquisa__trigger_border));
+		box-shadow: var(--tadashi_pesquisa__trigger___not_disabled___active_box_shadow, var(--tadashi_pesquisa__trigger_box_shadow));
+		color: var(--tadashi_pesquisa__trigger___not_disabled___active_color, var(--tadashi_pesquisa__trigger_color));
+		filter: var(--tadashi_pesquisa__trigger___not_disabled___active_filter, var(--tadashi_pesquisa__trigger_filter));
+		transform: var(--tadashi_pesquisa__trigger___not_disabled___active_transform, var(--tadashi_pesquisa__trigger_transform));
+	}
+
+	._tadashi_pesquisa__trigger___outline:not(:disabled):focus {
+		outline: var(--tadashi_pesquisa__trigger___outline___not_disabled___focus_outline, var(--tadashi_pesquisa__trigger_outline));
+	}
+
+	._tadashi_pesquisa__trigger___outline:not(:disabled):active {
+		outline: var(--tadashi_pesquisa__trigger___outline___not_disabled___active_outline, var(--tadashi_pesquisa__trigger_outline));
+	}
+
+	._tadashi_pesquisa__trigger___default_fx {
+		--tadashi_pesquisa__trigger___not_disabled___focus_filter: brightness(1.3);
+		--tadashi_pesquisa__trigger___not_disabled___hover_filter: brightness(1.3);
+		--tadashi_pesquisa__trigger___not_disabled___active_filter: brightness(1.5);
 	}
 </style>

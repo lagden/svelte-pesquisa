@@ -1,15 +1,15 @@
 /* global describe, afterEach, test, expect, jest */
 /* eslint no-unused-vars: 0 */
 
+import '@testing-library/jest-dom'
+
 import {
-	fireEvent,
+	// fireEvent,
 	cleanup,
 	render,
 } from '@testing-library/svelte'
 import Pesquisa from '../src/Pesquisa.svelte'
 import Slot from './Slot.svelte'
-
-import '@testing-library/jest-dom'
 
 describe('Pesquisa', () => {
 	afterEach(cleanup)
@@ -33,7 +33,7 @@ describe('Pesquisa', () => {
 		const button = getByTitle('btn')
 		const input = getByTitle('q')
 
-		await fireEvent.click(button)
+		// await fireEvent.click(button)
 
 		expect(button).toMatchSnapshot()
 		expect(input).toMatchSnapshot()
