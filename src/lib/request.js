@@ -1,4 +1,4 @@
-import {generate} from '@xet/totp-wasm-web'
+import {generate} from 'https://unpkg.com/@xet/totp-wasm-web@0.1.2/totp.js'
 import {template, parseBooleans, fullURL} from './helper.js'
 
 function request(endpoint, opts) {
@@ -48,7 +48,7 @@ function request(endpoint, opts) {
 		headers.Authorization = `Bearer ${globalThis.localStorage.getItem(storage)}`
 	}
 
-	if (parseBooleans(otp) === true) {
+	if (parseBooleans(otp) === true && typeof generate === 'function') {
 		headers['x-auth-otp'] = generate()
 	}
 

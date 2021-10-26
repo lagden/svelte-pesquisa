@@ -1,5 +1,5 @@
 import svelte from 'rollup-plugin-svelte'
-import copy from 'rollup-plugin-copy'
+// import copy from 'rollup-plugin-copy'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 
@@ -8,6 +8,8 @@ const ignoreWarnings = new Set([
 	'a11y-no-onchange',
 	'a11y-label-has-associated-control',
 ])
+
+const totp = 'https://unpkg.com/@xet/totp-wasm-web@0.1.2/totp.js'
 
 export default {
 	input: ['src/Pesquisa.svelte'],
@@ -25,6 +27,7 @@ export default {
 			sourcemap: true,
 		},
 	],
+	external: [totp],
 	plugins: [
 		svelte({
 			emitCss: false,
@@ -42,14 +45,14 @@ export default {
 		}),
 		resolve({browser: true}),
 		commonjs(),
-		copy({
-			targets: [
-				{
-					src: 'node_modules/@xet/totp-wasm-web/totp_bg.wasm',
-					dest: ['dist', 'src', 'public/module'],
-				},
-			],
-		}),
+		// copy({
+		// 	targets: [
+		// 		{
+		// 			src: 'node_modules/@xet/totp-wasm-web/totp_bg.wasm',
+		// 			dest: ['dist', 'src', 'public/module'],
+		// 		},
+		// 	],
+		// }),
 	],
 	watch: {
 		clearScreen: false,

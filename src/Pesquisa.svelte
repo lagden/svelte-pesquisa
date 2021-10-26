@@ -1,7 +1,6 @@
 <svelte:options tag="tadashi-pesquisa" accessors={true} />
 
 <script>
-	import wasmInit from '@xet/totp-wasm-web'
 	import flatten from '@tadashi/flatten-object'
 	import unflatten from '@tadashi/unflatten-object'
 	import {onMount} from 'svelte'
@@ -140,12 +139,7 @@
 	}
 
 	// Get input element
-	onMount(async () => {
-		try {
-			await wasmInit()
-		} catch (error) {
-			console.error('wasmInit', error)
-		}
+	onMount(() => {
 		slot = wrapper.firstElementChild
 		element = getEl(slot)
 		if (element) {

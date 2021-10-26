@@ -1684,7 +1684,6 @@ __metadata:
     "@tadashi/unflatten-object": 1.0.2
     "@testing-library/jest-dom": 5.14.1
     "@testing-library/svelte": 3.0.3
-    "@xet/totp-wasm-web": 0.1.2
     babel-jest: 27.3.1
     eslint: 8.1.0
     eslint-config-xo: 0.39.0
@@ -1895,9 +1894,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 16.11.5
-  resolution: "@types/node@npm:16.11.5"
-  checksum: 290382b32606f0edf4b0b4d3e50283fdf18591c48f0088c22f114196d7f032973720afaba9c11a5acf8411a97c40c94cb89efb5a49691b77ec47917d501916be
+  version: 16.11.6
+  resolution: "@types/node@npm:16.11.6"
+  checksum: 6e19634766ff589d3d2f361c2196b671f8f133cdadc5ad347a621c360d8994b6c4fbccfb2ad9c60c588c593831a96497c9c6b77d2b7e91be723384b94f6368e7
   languageName: node
   linkType: hard
 
@@ -1962,13 +1961,6 @@ __metadata:
   dependencies:
     "@types/yargs-parser": "*"
   checksum: caa21d2c957592fe2184a8368c8cbe5a82a6c2e2f2893722e489f842dc5963293d2f3120bc06fe3933d60a3a0d1e2eb269649fd6b1947fe1820f8841ba611dd9
-  languageName: node
-  linkType: hard
-
-"@xet/totp-wasm-web@npm:0.1.2":
-  version: 0.1.2
-  resolution: "@xet/totp-wasm-web@npm:0.1.2"
-  checksum: 8ba7ad35b1bc9d7a7986738a77b57b1ef0272cf473c3f119029a6da3c652e102bc8e77a0af7906c7e91147eeb1baf34554104d530bb52c7c36701dd7d5bc139f
   languageName: node
   linkType: hard
 
