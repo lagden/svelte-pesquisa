@@ -1,4 +1,4 @@
-import {generate} from 'https://unpkg.com/@xet/totp-wasm-web@0.1.2/totp.js'
+import {generate} from 'https://unpkg.com/@xet/totp-wasm-web@0.2.0/totp.js'
 import {template, parseBooleans, fullURL} from './helper.js'
 
 function request(endpoint, opts) {
@@ -49,7 +49,7 @@ function request(endpoint, opts) {
 	}
 
 	if (parseBooleans(otp) === true && typeof generate === 'function') {
-		headers['x-auth-otp'] = generate()
+		headers['x-auth-otp'] = generate(2, BigInt(120))
 	}
 
 	// Make the fetch

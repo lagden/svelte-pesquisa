@@ -10,7 +10,7 @@ export default {
 	// 	'@xet/totp-wasm-web': '<rootDir>/node_modules/@xet/totp-wasm-web/totp.js',
 	// },
 	moduleNameMapper: {
-		'https://unpkg.com/@xet/totp-wasm-web@0.1.2/totp.js': '<rootDir>/custom-test-module.js',
+		'https://unpkg.com/@xet/totp-wasm-web@0.2.0/totp.js': '<rootDir>/custom-test-module.js',
 	},
 	bail: false,
 	verbose: true,

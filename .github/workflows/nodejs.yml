@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -24,18 +24,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Update yarn
-        run: yarn set version berry
-
-      - name: Log yarn version
-        run: yarn --version
-
-      # - name: Generate simple .yarnrc.yml
-      #   run: |
-      #     echo "nodeLinker: node-modules" >> .yarnrc.yml
-
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
         env:
           CI: true
 

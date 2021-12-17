@@ -9,7 +9,7 @@ const ignoreWarnings = new Set([
 	'a11y-label-has-associated-control',
 ])
 
-const totp = 'https://unpkg.com/@xet/totp-wasm-web@0.1.2/totp.js'
+const totp = 'https://unpkg.com/@xet/totp-wasm-web@0.2.0/totp.js'
 
 export default {
 	input: ['src/Pesquisa.svelte'],
