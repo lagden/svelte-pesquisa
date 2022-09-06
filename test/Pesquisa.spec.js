@@ -1,14 +1,25 @@
-/* global describe, afterEach, test, expect, jest */
+/* globals describe, afterEach, beforeAll, afterAll, test, expect */
 /* eslint no-unused-vars: 0 */
 
+import timekeeper from 'timekeeper'
 import '@testing-library/jest-dom'
 import {
 	// fireEvent,
 	cleanup,
 	render,
 } from '@testing-library/svelte'
+
 import Pesquisa from '../src/Pesquisa.svelte'
 import Slot from './Slot.svelte'
+
+beforeAll(() => {
+	// Para o tempo
+	timekeeper.freeze(1_604_416_038 * 1000)
+})
+
+afterAll(() => {
+	timekeeper.reset()
+})
 
 describe('Pesquisa', () => {
 	afterEach(cleanup)
