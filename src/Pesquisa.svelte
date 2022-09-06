@@ -145,6 +145,7 @@
 	function pressEnter(event) {
 		if (event.key === 'Enter') {
 			event.preventDefault()
+			event.stopImmediatePropagation()
 			search()
 		}
 	}
