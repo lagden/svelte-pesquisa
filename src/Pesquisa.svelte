@@ -32,7 +32,6 @@
 	let _show = show
 	$: {
 		_show = parseBooleans(show)
-		console.log('_show = parseBooleans(show)', show)
 	}
 
 	// Fix attributes
@@ -135,13 +134,6 @@
 		}
 	}
 
-	// function searchBeforeInput(event) {
-	// 	if (event?.inputType === 'insertLineBreak') {
-	// 		event.preventDefault()
-	// 		search()
-	// 	}
-	// }
-
 	function pressEnter(event) {
 		if (event.key === 'Enter') {
 			event.preventDefault()
@@ -155,13 +147,11 @@
 		slot = wrapper.firstElementChild
 		element = getEl(slot)
 		if (element) {
-			// element.addEventListener('beforeinput', searchBeforeInput)
 			element.addEventListener('keypress', pressEnter)
 		}
 
 		return () => {
 			if (element) {
-				// element.removeEventListener('beforeinput', searchBeforeInput)
 				element.removeEventListener('keypress', pressEnter)
 			}
 		}
