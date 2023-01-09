@@ -1,6 +1,12 @@
-/* globals describe, afterEach, beforeAll, afterAll, test, expect */
-/* eslint no-unused-vars: 0 */
-
+import {
+	// jest,
+	describe,
+	expect,
+	test,
+	beforeAll,
+	afterAll,
+	afterEach,
+} from '@jest/globals'
 import timekeeper from 'timekeeper'
 import '@testing-library/jest-dom'
 import {
@@ -11,6 +17,17 @@ import {
 
 import Pesquisa from '../src/Pesquisa.svelte'
 import Slot from './Slot.svelte'
+
+// globalThis.fetch = jest.fn(() =>
+// 	Promise.resolve({
+// 		ok: true,
+// 		json: () => Promise.resolve({
+// 			data: {
+// 				id: 123,
+// 			},
+// 		}),
+// 	}),
+// )
 
 beforeAll(() => {
 	// Para o tempo

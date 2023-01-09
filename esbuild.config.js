@@ -15,7 +15,7 @@ try {
 		splitting: false,
 		format: 'esm',
 		outdir: './dist',
-		target: ['es2021'],
+		target: ['es2022'],
 		plugins: [
 			esbuildSvelte(config),
 		],

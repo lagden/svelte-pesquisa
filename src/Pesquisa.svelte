@@ -3,8 +3,9 @@
 <script>
 	import flatten from '@tadashi/flatten-object'
 	import unflatten from '@tadashi/unflatten-object'
+	import {parseBoolean} from '@tadashi/common'
 	import {onMount} from 'svelte'
-	import {parseBooleans, getEl} from './lib/helper.js'
+	import {getEl} from './lib/helper.js'
 	import dispatch from './lib/dispatch.js'
 	import request from './lib/request.js'
 
@@ -31,7 +32,7 @@
 
 	let _show = show
 	$: {
-		_show = parseBooleans(show)
+		_show = parseBoolean(show)
 	}
 
 	// Fix attributes
@@ -175,7 +176,7 @@
 			type="button"
 			class="_tadashi_pesquisa__trigger _tadashi_pesquisa__trigger___outline"
 			class:_tadashi_pesquisa__trigger___loading={isBusy}
-			class:_tadashi_pesquisa__trigger___default_fx={parseBooleans(fx)}
+			class:_tadashi_pesquisa__trigger___default_fx={parseBoolean(fx)}
 			bind:this={node}
 			on:click={search}
 			{...prepareProps()}

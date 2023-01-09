@@ -1,12 +1,12 @@
 // Helper - Prepare event and dispatch
 function dispatch(data, node, success, cb) {
-	const _event = success ?
-		new CustomEvent('response', {
+	const _event = success
+		? new CustomEvent('response', {
 			detail: {...data},
 			bubbles: true,
 			composed: true,
-		}) :
-		new ErrorEvent('error', {
+		})
+		: new ErrorEvent('error', {
 			error: data,
 			message: data.message,
 			lineno: 72,

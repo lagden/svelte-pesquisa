@@ -1,5 +1,18 @@
-import {generate} from 'https://unpkg.com/@xet/totp-wasm-web@0.2.0/totp.js'
-import {template, parseBooleans, fullURL} from './helper.js'
+import init, {generate_auto} from '@xet/totp-wasm-web'
+import {template, parseBoolean, fullURL} from '@tadashi/common'
+
+globalThis['@xet/totp-wasm'] = {
+	initialized: false,
+}
+
+if (globalThis['@xet/totp-wasm'].initialized === false) {
+	try {
+		await init()
+		globalThis['@xet/totp-wasm'].initialized = true
+	} catch (error) {
+		console.error('totp init error', error.message)
+	}
+}
 
 function request(endpoint, opts) {
 	const {
@@ -18,8 +31,8 @@ function request(endpoint, opts) {
 		method,
 		// mode: 'cors',
 		// cache: 'default',
-		// credentials: 'include',
-		// redirect: 'follow',
+		credentials: 'include',
+		redirect: 'follow',
 	}
 
 	// Prepare request
@@ -48,8 +61,8 @@ function request(endpoint, opts) {
 		headers.Authorization = `Bearer ${globalThis.localStorage.getItem(storage)}`
 	}
 
-	if (parseBooleans(otp) === true && typeof generate === 'function') {
-		headers['x-auth-otp'] = generate(2, BigInt(120))
+	if (parseBoolean(otp) === true && typeof generate_auto === 'function') {
+		headers['x-auth-otp'] = generate_auto(2, BigInt(120))
 	}
 
 	// Make the fetch

@@ -1,6 +1,7 @@
 const ignoreWarnings = new Set([
 	'a11y-no-onchange',
 	'a11y-label-has-associated-control',
+	'a11y-click-events-have-key-events',
 	'css-unused-selector',
 	// 'missing-declaration',
 ])
